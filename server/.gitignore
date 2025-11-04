@@ -1,0 +1,30 @@
+# Node.js dependencies
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+config.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Build output (if you compile TypeScript or bundle)
+dist/
+build/
+.cache/
+
+# Temporary files
+.tmp/
+temp/
