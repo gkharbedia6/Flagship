@@ -6,8 +6,9 @@ import mongoose from "mongoose";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
-// import { router } from "@angular-monorepo/mea-lib/router";
 import * as dotenv from "dotenv";
+import { router } from "./router";
+
 dotenv.config();
 
 const port = process.env.PORT || 8080;
@@ -48,4 +49,4 @@ mongoose.connection.on("error", (err: Error) => {
   console.log(err);
 });
 
-// app.use("/api", router());
+app.use("/api", router());
