@@ -1,1 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
+@use './app/styles/material.scss';
+@use 'sass:meta';
+// Import Tailwind theme tokens and utilities without the global preflight reset, so Material styles stay intact.
+@include meta.load-css('tailwindcss/theme');
+@include meta.load-css('tailwindcss/utilities');
+
+* {
+  box-sizing: border-box;
+}
+
+a:visited {
+  color: inherit !important;
+}
