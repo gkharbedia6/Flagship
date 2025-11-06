@@ -1,5 +1,5 @@
 import express from "express";
-import { createUser, getUserByEmail } from "../db";
+import { createUser, getUserByEmail, getUserByUsername } from "../db";
 import { authentication, random } from "../utils";
 
 export const register = async (
@@ -13,6 +13,14 @@ export const register = async (
       return res
         .status(400)
         .json({ message: "You have not provided all required fields." });
+    }
+
+    const checkUserByUsername = await getUserByUsername(username);
+
+    if (checkUserByUsername) {
+      return res
+        .status(400)
+        .json({ message: "User with that username already exists." });
     }
 
     const checkUserByEmail = await getUserByEmail(email);

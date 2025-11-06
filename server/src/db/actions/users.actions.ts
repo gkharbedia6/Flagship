@@ -6,6 +6,9 @@ export const getUserById = (id: string) => UserModel.findById({ id });
 
 export const getUserByEmail = (email: string) => UserModel.findOne({ email });
 
+export const getUserByUsername = (username: string) =>
+  UserModel.findOne({ username });
+
 export const getUserBySessionToken = (sessionToken: string) =>
   UserModel.findOne({ "authentication.sessionToken": sessionToken });
 

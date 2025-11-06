@@ -1,11 +1,16 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { matchPasswordValidator } from '../../utils';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AuthApiService } from '../../data/api/auth/auth.api';
+import { iRegisterResponse } from '../../types';
 
 @Component({
   selector: 'auth-register',
@@ -17,6 +22,7 @@ import { RouterLink } from '@angular/router';
     MatTabsModule,
     MatIconModule,
     RouterLink,
+    ReactiveFormsModule,
   ],
   template: `
     <div
@@ -26,43 +32,73 @@ import { RouterLink } from '@angular/router';
         <p class="m-0 text-lg text-black">Get started</p>
         <p class="m-0 text-sm text-black opacity-70">Create a new account</p>
       </div>
-      <mat-form-field class="w-full">
-        <mat-label>Username</mat-label>
-        <input matInput />
-      </mat-form-field>
-      <mat-form-field class="w-full">
-        <mat-label>Email</mat-label>
-        <input matInput />
-      </mat-form-field>
-      <mat-form-field class="w-full">
-        <mat-label>Password</mat-label>
-        <input matInput [type]="hide() ? 'password' : 'text'" />
-        <button
-          matIconButton
-          matSuffix
-          (click)="clickEvent($event)"
-          [attr.aria-label]="'Hide password'"
-          [attr.aria-pressed]="hide()"
-        >
-          <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
-        </button>
-      </mat-form-field>
-      <mat-form-field class="w-full">
-        <mat-label>Confirm Password</mat-label>
-        <input matInput [type]="hide() ? 'password' : 'text'" />
-        <button
-          matIconButton
-          matSuffix
-          (click)="clickEvent($event)"
-          [attr.aria-label]="'Hide password'"
-          [attr.aria-pressed]="hide()"
-        >
-          <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
-        </button>
-      </mat-form-field>
-      <mat-card-actions class="mt-2  flex items-center justify-center w-full">
-        <button class="w-full button-small-rounded" matButton="outlined">Sign Up</button>
-      </mat-card-actions>
+      <form class="flex flex-col gap-3 w-full" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <mat-form-field class="w-full">
+          <mat-label>Username</mat-label>
+          <input formControlName="username" matInput />
+          @if (this.registerForm.controls['username'].hasError('required')) {
+          <mat-error>Username is required. </mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>Email</mat-label>
+          <input formControlName="email" matInput />
+          @if (this.registerForm.controls['email'].hasError('required')) {
+          <mat-error>Email is required. </mat-error>
+          } @else if (this.registerForm.controls['email'].hasError('email')) {
+          <mat-error>Email must be correct format.</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>Password</mat-label>
+          <input formControlName="password" matInput [type]="hide() ? 'password' : 'text'" />
+          <button
+            matIconButton
+            matSuffix
+            (click)="clickEvent($event)"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide()"
+          >
+            <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (this.registerForm.controls['password'].hasError('required')) {
+          <mat-error>Password is required. </mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>Confirm Password</mat-label>
+          <input formControlName="confirmPassword" matInput [type]="hide() ? 'password' : 'text'" />
+          <button
+            matIconButton
+            matSuffix
+            (click)="clickEvent($event)"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide()"
+          >
+            <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (this.registerForm.controls['confirmPassword'].hasError('required')) {
+          <mat-error>Password is required. </mat-error>
+          } @else if (this.registerForm.controls['confirmPassword'].hasError('passwordMismatch')) {
+          <mat-error>Passwords do not match. </mat-error>
+
+          }
+        </mat-form-field>
+        @if(this.registerError()) {
+        <mat-error>{{ this.registerError()?.error.message }}</mat-error>
+        }
+        <mat-card-actions class="mt-2  flex items-center justify-center w-full">
+          <button class="w-full button-small-rounded" matButton="outlined">
+            @if(this.isLoading()) {
+            <mat-icon fontSet="material-symbols-outlined" class="!m-0 animate-spin"
+              >progress_activity</mat-icon
+            >
+
+            } @else { Sign Up }
+          </button>
+        </mat-card-actions>
+      </form>
+
       <div class="flex flex-row mt-10 items-center justify-center gap-1">
         <p>Already have an account?</p>
         <a routerLink="/auth/sign-in" class="cursor-pointer underline hover:opacity-80"
@@ -72,10 +108,48 @@ import { RouterLink } from '@angular/router';
     </div>
   `,
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
+  private _authApi = inject(AuthApiService);
+  private router = inject(Router);
   hide = signal(true);
+  isLoading = signal(false);
   clickEvent(event: MouseEvent) {
     this.hide.set(!this.hide());
     event.stopPropagation();
+  }
+  registerError = signal<HttpErrorResponse | null>(null);
+
+  registerForm = new FormGroup(
+    {
+      username: new FormControl('example', Validators.required),
+      email: new FormControl('example@gmail.com', [Validators.required, Validators.email]),
+      password: new FormControl('123', Validators.required),
+      confirmPassword: new FormControl('123', Validators.required),
+    },
+    {
+      validators: matchPasswordValidator,
+    }
+  );
+
+  ngOnInit(): void {
+    console.log(this.registerError());
+  }
+
+  onSubmit() {
+    this.isLoading.set(true);
+    if (!this.registerForm.valid) return;
+    const { username, email, password } = this.registerForm.value;
+    if (!username || !email || !password) return;
+    this._authApi.register({ username, email, password }).subscribe({
+      next: (response: iRegisterResponse) => {
+        this.registerError.set(null);
+        this.isLoading.set(false);
+        this.router.navigate(['/auth/sign-in']);
+      },
+      error: (error: any) => {
+        this.isLoading.set(false);
+        this.registerError.set(error);
+      },
+    });
   }
 }
