@@ -63,6 +63,8 @@ import { iRegisterResponse } from '../../types';
           </button>
           @if (this.registerForm.controls['password'].hasError('required')) {
           <mat-error>Password is required. </mat-error>
+          } @else if (this.registerForm.controls['password'].hasError('minlength')) {
+          <mat-error>Password must be minimum 6 characters. </mat-error>
           }
         </mat-form-field>
         <mat-form-field class="w-full">
@@ -121,25 +123,29 @@ export class RegisterComponent implements OnInit {
 
   registerForm = new FormGroup(
     {
-      username: new FormControl('example', Validators.required),
-      email: new FormControl('example@gmail.com', [Validators.required, Validators.email]),
-      password: new FormControl('123', Validators.required),
-      confirmPassword: new FormControl('123', Validators.required),
+      username: new FormControl('', Validators.required),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+      confirmPassword: new FormControl('', [Validators.required]),
     },
     {
       validators: matchPasswordValidator,
     }
   );
 
-  ngOnInit(): void {
-    console.log(this.registerError());
-  }
+  ngOnInit(): void {}
 
   onSubmit() {
     this.isLoading.set(true);
-    if (!this.registerForm.valid) return;
+    if (!this.registerForm.valid) {
+      this.isLoading.set(false);
+      return;
+    }
     const { username, email, password } = this.registerForm.value;
-    if (!username || !email || !password) return;
+    if (!username || !email || !password) {
+      this.isLoading.set(false);
+      return;
+    }
     this._authApi.register({ username, email, password }).subscribe({
       next: (response: iRegisterResponse) => {
         this.registerError.set(null);
