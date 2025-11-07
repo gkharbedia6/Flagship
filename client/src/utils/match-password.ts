@@ -15,7 +15,6 @@ export const matchPasswordValidator: ValidatorFn = (
   }
 
   if (password.value !== confirmPassword.value) {
-    console.log(typeof password.value, typeof confirmPassword.value);
     confirmPassword.setErrors({ passwordMismatch: true });
     return { passwordMismatch: true };
   } else {

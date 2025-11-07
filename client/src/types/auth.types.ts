@@ -15,3 +15,8 @@ export interface iRegisterResponse {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface iLoginForm {
+  email: string;
+  password: string;
+}

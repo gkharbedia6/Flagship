@@ -32,7 +32,7 @@ import { iRegisterResponse } from '../../types';
         <p class="m-0 text-lg text-black">Get started</p>
         <p class="m-0 text-sm text-black opacity-70">Create a new account</p>
       </div>
-      <form class="flex flex-col gap-3 w-full" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <form class="flex flex-col gap-1 w-full" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <mat-form-field class="w-full">
           <mat-label>Username</mat-label>
           <input formControlName="username" matInput />
@@ -55,7 +55,7 @@ import { iRegisterResponse } from '../../types';
           <button
             matIconButton
             matSuffix
-            (click)="clickEvent($event)"
+            (click)="showPassword($event)"
             [attr.aria-label]="'Hide password'"
             [attr.aria-pressed]="hide()"
           >
@@ -73,7 +73,7 @@ import { iRegisterResponse } from '../../types';
           <button
             matIconButton
             matSuffix
-            (click)="clickEvent($event)"
+            (click)="showPassword($event)"
             [attr.aria-label]="'Hide password'"
             [attr.aria-pressed]="hide()"
           >
@@ -90,7 +90,7 @@ import { iRegisterResponse } from '../../types';
         <mat-error>{{ this.registerError()?.error.message }}</mat-error>
         }
         <mat-card-actions class="mt-2  flex items-center justify-center w-full">
-          <button class="w-full button-small-rounded" matButton="outlined">
+          <button type="submit" class="w-full button-small-rounded" matButton="outlined">
             @if(this.isLoading()) {
             <mat-icon fontSet="material-symbols-outlined" class="!m-0 animate-spin"
               >progress_activity</mat-icon
@@ -115,7 +115,7 @@ export class RegisterComponent implements OnInit {
   private router = inject(Router);
   hide = signal(true);
   isLoading = signal(false);
-  clickEvent(event: MouseEvent) {
+  showPassword(event: MouseEvent) {
     this.hide.set(!this.hide());
     event.stopPropagation();
   }

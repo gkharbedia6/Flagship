@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { iRegisterForm, iRegisterResponse } from '../../../types';
+import { iLoginForm, iRegisterForm, iRegisterResponse } from '../../../types';
 import { Observable } from 'rxjs';
 import { HttpRequestService } from '../../http';
 
@@ -12,5 +12,9 @@ export class AuthApiService {
 
   register(body: iRegisterForm): Observable<iRegisterResponse> {
     return this._httpRequestService.post('auth/register', body);
+  }
+
+  login(body: iLoginForm): Observable<any> {
+    return this._httpRequestService.post('auth/login', body, {}, true);
   }
 }

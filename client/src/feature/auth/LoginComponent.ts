@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
@@ -6,6 +6,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
+import { AuthApiService } from '../../data/api/auth/auth.api';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+  ɵInternalFormsSharedModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'auth-login',
@@ -17,6 +26,8 @@ import { RouterLink } from '@angular/router';
     MatTabsModule,
     MatIconModule,
     RouterLink,
+    ɵInternalFormsSharedModule,
+    ReactiveFormsModule,
   ],
   template: `
     <div
@@ -26,31 +37,53 @@ import { RouterLink } from '@angular/router';
         <p class="m-0 text-lg text-black">Welcome back</p>
         <p class="m-0 text-sm text-black opacity-70">Sign in to your account</p>
       </div>
-      <mat-form-field class="w-full">
-        <mat-label>Email</mat-label>
-        <input matInput placeholder="Placeholder" />
-      </mat-form-field>
-      <a
-        routerLink="/forgot-password"
-        class="m-0 mb-2 text-end w-full cursor-pointer hover:opacity-80"
-        >Forgot Password?</a
-      >
-      <mat-form-field class="w-full">
-        <mat-label>Password</mat-label>
-        <input matInput [type]="hide() ? 'password' : 'text'" />
-        <button
-          matIconButton
-          matSuffix
-          (click)="clickEvent($event)"
-          [attr.aria-label]="'Hide password'"
-          [attr.aria-pressed]="hide()"
-        >
-          <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
-        </button>
-      </mat-form-field>
-      <mat-card-actions class="mt-2 flex items-center justify-center w-full">
-        <button matButton="outlined" class="button-small-rounded w-full">Sign In</button>
-      </mat-card-actions>
+      <form class="flex flex-col gap-1 w-full" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <mat-form-field class="w-full">
+          <mat-label>Email</mat-label>
+          <input formControlName="email" matInput />
+          @if (this.loginForm.controls['email'].hasError('required')) {
+          <mat-error>Email is required. </mat-error>
+          } @else if (this.loginForm.controls['email'].hasError('email')) {
+          <mat-error>Email must be correct format.</mat-error>
+          }
+        </mat-form-field>
+        <div class="w-full flex flex-row justify-end">
+          <a routerLink="/forgot-password" class="m-0 mb-2 cursor-pointer hover:opacity-80"
+            >Forgot Password?</a
+          >
+        </div>
+
+        <mat-form-field class="w-full">
+          <mat-label>Password</mat-label>
+          <input formControlName="password" matInput [type]="hide() ? 'password' : 'text'" />
+          <button
+            matIconButton
+            matSuffix
+            (click)="showPassword($event)"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide()"
+          >
+            <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (this.loginForm.controls['password'].hasError('required')) {
+          <mat-error>Password is required. </mat-error>
+          }
+        </mat-form-field>
+        @if(this.loginError()) {
+        <mat-error>{{ this.loginError()?.error.message }}</mat-error>
+        }
+        <mat-card-actions class="mt-2 flex items-center justify-center w-full">
+          <button type="submit" matButton="outlined" class="button-small-rounded w-full">
+            @if(this.isLoading()) {
+            <mat-icon fontSet="material-symbols-outlined" class="!m-0 animate-spin"
+              >progress_activity</mat-icon
+            >
+
+            } @else { Sign In }
+          </button>
+        </mat-card-actions>
+      </form>
+
       <div class="flex flex-row items-center mt-10 justify-center gap-1">
         <p>Don't have an account?</p>
         <a routerLink="/auth/sign-up" class="cursor-pointer underline hover:opacity-80"
@@ -61,9 +94,42 @@ import { RouterLink } from '@angular/router';
   `,
 })
 export class LoginComponent {
+  private _authApi = inject(AuthApiService);
   hide = signal(true);
-  clickEvent(event: MouseEvent) {
+  isLoading = signal(false);
+  showPassword(event: MouseEvent) {
     this.hide.set(!this.hide());
     event.stopPropagation();
+  }
+  loginError = signal<HttpErrorResponse | null>(null);
+
+  loginForm = new FormGroup({
+    email: new FormControl('giogio@gmail.com', [Validators.email, Validators.required]),
+    password: new FormControl('123123', Validators.required),
+  });
+
+  onSubmit() {
+    this.isLoading.set(true);
+    if (!this.loginForm.valid) {
+      this.isLoading.set(false);
+      return;
+    }
+    const { email, password } = this.loginForm.value;
+    if (!email || !password) {
+      this.isLoading.set(false);
+      return;
+    }
+    this._authApi.login({ email, password }).subscribe({
+      next: (response: any) => {
+        this.loginError.set(null);
+        this.isLoading.set(false);
+        console.log(response);
+        // this.router.navigate(['/auth/sign-in']);
+      },
+      error: (error: any) => {
+        this.isLoading.set(false);
+        this.loginError.set(error);
+      },
+    });
   }
 }
