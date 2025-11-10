@@ -2,7 +2,7 @@ import { UserModel } from "../schemas/users.schemas";
 
 export const getUsers = UserModel.find();
 
-export const getUserById = (id: string) => UserModel.findById({ id });
+export const getUserById = (id: string) => UserModel.findById({ _id: id });
 
 export const getUserByEmail = (email: string) => UserModel.findOne({ email });
 
@@ -11,6 +11,9 @@ export const getUserByUsername = (username: string) =>
 
 export const getUserBySessionToken = (sessionToken: string) =>
   UserModel.findOne({ "authentication.sessionToken": sessionToken });
+
+export const getUserByRefreshToken = (refreshToken: string) =>
+  UserModel.findOne({ "authentication.refreshToken": refreshToken });
 
 export const createUser = (values: Record<string, any>) =>
   new UserModel(values).save().then((user) => user.toObject());

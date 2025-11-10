@@ -4,7 +4,7 @@ export interface iRegisterForm {
   password: string;
 }
 
-export interface iRegisterResponse {
+export interface iUser {
   _id: string;
   username: string;
   email: string;

@@ -9,8 +9,8 @@ import { Router, RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { matchPasswordValidator } from '../../utils';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AuthApiService } from '../../data/api/auth/auth.api';
-import { iRegisterResponse } from '../../types';
+import { iUser } from '../../types';
+import { AuthApiService } from '../../data/api';
 
 @Component({
   selector: 'auth-register',
@@ -147,7 +147,8 @@ export class RegisterComponent implements OnInit {
       return;
     }
     this._authApi.register({ username, email, password }).subscribe({
-      next: (response: iRegisterResponse) => {
+      next: (response: iUser) => {
+        console.log(response);
         this.registerError.set(null);
         this.isLoading.set(false);
         this.router.navigate(['/auth/sign-in']);

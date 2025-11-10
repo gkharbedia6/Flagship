@@ -6,7 +6,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import { AuthApiService } from '../../data/api/auth/auth.api';
 import {
   FormControl,
   FormGroup,
@@ -15,6 +14,8 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AuthApiService } from '../../data/api';
+import { AuthFacadeService } from '../../data/auth';
 
 @Component({
   selector: 'auth-login',
@@ -94,7 +95,8 @@ import { HttpErrorResponse } from '@angular/common/http';
   `,
 })
 export class LoginComponent {
-  private _authApi = inject(AuthApiService);
+  // private _authApi = inject(AuthApiService);
+  private _authFacade = inject(AuthFacadeService);
   hide = signal(true);
   isLoading = signal(false);
   showPassword(event: MouseEvent) {
@@ -104,12 +106,12 @@ export class LoginComponent {
   loginError = signal<HttpErrorResponse | null>(null);
 
   loginForm = new FormGroup({
-    email: new FormControl('giogio@gmail.com', [Validators.email, Validators.required]),
+    email: new FormControl('gasana@gmail.com', [Validators.email, Validators.required]),
     password: new FormControl('123123', Validators.required),
   });
 
   onSubmit() {
-    this.isLoading.set(true);
+    // this.isLoading.set(true);
     if (!this.loginForm.valid) {
       this.isLoading.set(false);
       return;
@@ -119,12 +121,12 @@ export class LoginComponent {
       this.isLoading.set(false);
       return;
     }
-    this._authApi.login({ email, password }).subscribe({
+    // this._authFacade.login(email, password);
+    this._authFacade.login(email, password).subscribe({
       next: (response: any) => {
         this.loginError.set(null);
         this.isLoading.set(false);
         console.log(response);
-        // this.router.navigate(['/auth/sign-in']);
       },
       error: (error: any) => {
         this.isLoading.set(false);
