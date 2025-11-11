@@ -7,7 +7,7 @@ import {
 } from "../db";
 import { authentication, random } from "../utils";
 
-export const register = async (
+export const signUp = async (
   req: express.Request,
   res: express.Response
 ): Promise<any | Error> => {
@@ -54,7 +54,7 @@ export const register = async (
   }
 };
 
-export const login = async (
+export const signIn = async (
   req: express.Request,
   res: express.Response
 ): Promise<any | Error> => {
@@ -126,7 +126,7 @@ export const login = async (
   }
 };
 
-export const logout = async (
+export const signOut = async (
   req: express.Request,
   res: express.Response
 ): Promise<any | Error> => {
@@ -159,7 +159,7 @@ export const logout = async (
     return res.status(200).json({ messsage: "Logged out." });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ message: "Something went wrong. logout" });
+    return res.status(400).json({ message: "Something went wrong." });
   }
 };
 
@@ -167,7 +167,7 @@ interface AuthenticatedRequest extends express.Request {
   identity?: any;
 }
 
-export const loggedInUser = async (
+export const signedInUser = async (
   req: AuthenticatedRequest,
   res: express.Response
 ): Promise<any | Error> => {
@@ -179,18 +179,6 @@ export const loggedInUser = async (
     }
 
     return res.status(200).json(identity).end();
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({ message: "Something went wrong." });
-  }
-};
-
-export const test = async (
-  req: AuthenticatedRequest,
-  res: express.Response
-): Promise<any | Error> => {
-  try {
-    return res.status(200).json({ name: "lol" }).end();
   } catch (error) {
     console.log(error);
     return res.status(400).json({ message: "Something went wrong." });

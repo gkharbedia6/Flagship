@@ -1,4 +1,4 @@
-export interface iRegisterForm {
+export interface iSignUpForm {
   username: string;
   email: string;
   password: string;
@@ -16,7 +16,7 @@ export interface iUser {
   updatedAt: string;
 }
 
-export interface iLoginForm {
+export interface iSignInForm {
   email: string;
   password: string;
 }

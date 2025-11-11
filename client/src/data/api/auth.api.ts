@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { iLoginForm, iRegisterForm, iUser } from '../../types';
+import { iSignInForm, iSignUpForm, iUser } from '../../types';
 import { Observable } from 'rxjs';
 import { HttpRequestService } from '../http';
 
@@ -10,16 +10,16 @@ export class AuthApiService {
   private _baseUrl = 'auth';
   private _httpRequest = inject(HttpRequestService);
 
-  register(body: iRegisterForm): Observable<iUser> {
-    return this._httpRequest.post(`${this._baseUrl}/register`, body);
+  signUp(body: iSignUpForm): Observable<iUser> {
+    return this._httpRequest.post(`${this._baseUrl}/sign-up`, body);
   }
 
-  login(body: iLoginForm): Observable<any> {
-    return this._httpRequest.post(`${this._baseUrl}/login`, body);
+  signIn(body: iSignInForm): Observable<any> {
+    return this._httpRequest.post(`${this._baseUrl}/sign-in`, body);
   }
 
-  logout(id: string) {
-    return this._httpRequest.post(`${this._baseUrl}/logout`, { id });
+  signOut(id: string) {
+    return this._httpRequest.post(`${this._baseUrl}/sign-out`, { id });
   }
 
   getCurrentUser(): Observable<any> {

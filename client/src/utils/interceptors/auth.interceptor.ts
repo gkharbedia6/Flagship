@@ -19,7 +19,7 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          this._authFacade.handleLogout();
+          this._authFacade.handleSignOut();
         }
         return throwError(() => error);
       })

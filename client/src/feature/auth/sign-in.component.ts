@@ -13,12 +13,10 @@ import {
   ɵInternalFormsSharedModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { HttpErrorResponse } from '@angular/common/http';
-import { AuthApiService } from '../../data/api';
 import { AuthFacadeService } from '../../data/auth';
 
 @Component({
-  selector: 'auth-login',
+  selector: 'auth-sign-in',
   imports: [
     MatFormFieldModule,
     MatInputModule,
@@ -70,12 +68,12 @@ import { AuthFacadeService } from '../../data/auth';
           <mat-error>Password is required. </mat-error>
           }
         </mat-form-field>
-        @if(this.loginError()) {
-        <mat-error>{{ this.loginError()?.error.message }}</mat-error>
+        @if(this.authFacade.getError()) {
+        <mat-error>{{ this.authFacade.getError()?.error.message }}</mat-error>
         }
         <mat-card-actions class="mt-2 flex items-center justify-center w-full">
           <button type="submit" matButton="outlined" class="button-small-rounded w-full">
-            @if(this.isLoading()) {
+            @if(this.authFacade.getIsLoading()) {
             <mat-icon fontSet="material-symbols-outlined" class="!m-0 animate-spin"
               >progress_activity</mat-icon
             >
@@ -94,16 +92,14 @@ import { AuthFacadeService } from '../../data/auth';
     </div>
   `,
 })
-export class LoginComponent {
-  // private _authApi = inject(AuthApiService);
-  private _authFacade = inject(AuthFacadeService);
+export class SignInComponent {
+  authFacade = inject(AuthFacadeService);
+
   hide = signal(true);
-  isLoading = signal(false);
   showPassword(event: MouseEvent) {
     this.hide.set(!this.hide());
     event.stopPropagation();
   }
-  loginError = signal<HttpErrorResponse | null>(null);
 
   loginForm = new FormGroup({
     email: new FormControl('gasana@gmail.com', [Validators.email, Validators.required]),
@@ -111,27 +107,10 @@ export class LoginComponent {
   });
 
   onSubmit() {
-    // this.isLoading.set(true);
-    if (!this.loginForm.valid) {
-      this.isLoading.set(false);
-      return;
-    }
+    if (!this.loginForm.valid) return;
     const { email, password } = this.loginForm.value;
-    if (!email || !password) {
-      this.isLoading.set(false);
-      return;
-    }
-    // this._authFacade.login(email, password);
-    this._authFacade.login(email, password).subscribe({
-      next: (response: any) => {
-        this.loginError.set(null);
-        this.isLoading.set(false);
-        console.log(response);
-      },
-      error: (error: any) => {
-        this.isLoading.set(false);
-        this.loginError.set(error);
-      },
-    });
+    if (!email || !password) return;
+
+    this.authFacade.signIn(email, password);
   }
 }

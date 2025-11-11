@@ -1,11 +1,10 @@
 import express from "express";
-import { loggedInUser, login, logout, register, test } from "../controllers";
 import { isAuthenticated } from "../utils/middleware";
+import { signedInUser, signIn, signOut, signUp } from "../controllers";
 
 export default (router: express.Router) => {
-  router.post("/auth/register", register);
-  router.post("/auth/login", login);
-  router.post("/auth/logout", isAuthenticated, logout);
-  router.post("/auth/test", isAuthenticated, test);
-  router.get("/auth/me", isAuthenticated, loggedInUser);
+  router.post("/auth/sign-up", signUp);
+  router.post("/auth/sign-in", signIn);
+  router.post("/auth/sign-out", isAuthenticated, signOut);
+  router.get("/auth/me", isAuthenticated, signedInUser);
 };

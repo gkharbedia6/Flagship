@@ -1,21 +1,24 @@
-import { inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Injectable } from '@angular/core';
 import { AuthApiService } from '../api';
 import { tap } from 'rxjs';
 import { AuthStateService } from './auth.state';
 import { iUser } from '../../types';
 import { Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class AuthFacadeService {
   private _state = inject(AuthStateService);
   private _authApi = inject(AuthApiService);
   private _router = inject(Router);
+  private _destroyRef = inject(DestroyRef);
 
   loadCurrentUserInfo() {
     if (!this._state.getIsAuthenticated()) return;
     return this._authApi.getCurrentUser().pipe(
       tap((user: iUser) => {
-        this.handleLogin(user);
+        this.handleSignIn(user);
       })
     );
   }
@@ -32,29 +35,47 @@ export class AuthFacadeService {
     return this._state.getUser();
   }
 
-  login(email: string, password: string) {
-    return this._authApi.login({ email, password }).pipe(
-      tap((user: iUser) => {
-        this.handleLogin(user);
-        this._router.navigate(['/']);
-      })
-    );
+  getIsLoading() {
+    return this._state.getIsLoading();
   }
 
-  logout(userId: string) {
-    return this._authApi.logout(userId).pipe(
+  getError() {
+    return this._state.getError();
+  }
+
+  signIn(email: string, password: string) {
+    this._state.setIsLoading(true);
+    return this._authApi
+      .signIn({ email, password })
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: (user: iUser) => {
+          this._state.setError(null);
+          this._state.setIsLoading(false);
+          this.handleSignIn(user);
+          this._router.navigate(['/']);
+        },
+        error: (error: HttpErrorResponse) => {
+          this._state.setError(error);
+          this._state.setIsLoading(false);
+        },
+      });
+  }
+
+  signOut(userId: string) {
+    return this._authApi.signOut(userId).pipe(
       tap(() => {
-        this.handleLogout();
+        this.handleSignOut();
       })
     );
   }
 
-  handleLogin(user: iUser) {
+  handleSignIn(user: iUser) {
     this._state.setUser(user);
     this._state.setIsAuthenticated(true);
   }
 
-  handleLogout() {
+  handleSignOut() {
     this._state.setUser(null);
     this._state.setIsAuthenticated(false);
     this._router.navigateByUrl('/auth');

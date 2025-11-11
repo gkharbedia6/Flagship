@@ -13,7 +13,7 @@ import { iUser } from '../../types';
 import { AuthApiService } from '../../data/api';
 
 @Component({
-  selector: 'auth-register',
+  selector: 'auth-sign-up',
   imports: [
     MatFormFieldModule,
     MatInputModule,
@@ -110,7 +110,7 @@ import { AuthApiService } from '../../data/api';
     </div>
   `,
 })
-export class RegisterComponent implements OnInit {
+export class SignUpComponent implements OnInit {
   private _authApi = inject(AuthApiService);
   private router = inject(Router);
   hide = signal(true);
@@ -146,7 +146,7 @@ export class RegisterComponent implements OnInit {
       this.isLoading.set(false);
       return;
     }
-    this._authApi.register({ username, email, password }).subscribe({
+    this._authApi.signUp({ username, email, password }).subscribe({
       next: (response: iUser) => {
         console.log(response);
         this.registerError.set(null);

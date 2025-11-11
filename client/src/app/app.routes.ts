@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { RegisterComponent } from '../feature/auth/Register.component';
-import { LoginComponent } from '../feature/auth/Login.component';
 import { AuthLayoutComponent } from '../feature/auth/layout/Auth.component';
-import { ForgotPassword } from '../feature/auth/ForgotPassword.component';
-import { LandingComponent } from '../feature/landing/Landing.component';
+import { ForgotPassword } from '../feature/auth/forgot-password.component';
 import { AuthGuard } from '../utils/guards/auth.guard';
+import { SignInComponent } from '../feature/auth/sign-in.component';
+import { SignUpComponent } from '../feature/auth/sign-up.component';
+import { LandingComponent } from '../feature/landing/landing.component';
 
 export const routes: Routes = [
   {
@@ -14,9 +14,9 @@ export const routes: Routes = [
       { path: '', redirectTo: 'sign-in', pathMatch: 'full' },
       {
         path: 'sign-up',
-        component: RegisterComponent,
+        component: SignUpComponent,
       },
-      { path: 'sign-in', component: LoginComponent },
+      { path: 'sign-in', component: SignInComponent },
     ],
   },
   { path: 'forgot-password', component: ForgotPassword },
@@ -29,7 +29,7 @@ export const routes: Routes = [
       {
         path: 'profile',
         loadComponent: () =>
-          import(`../feature/profile/Profile.component`).then((c) => c.ProfileComponent),
+          import(`../feature/profile/profile.component`).then((c) => c.ProfileComponent),
       },
     ],
   },
