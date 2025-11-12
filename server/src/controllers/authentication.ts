@@ -1,11 +1,14 @@
 import express from "express";
 import {
+  createForgotPasswordUser,
   createUnvefiriedUser,
   createUser,
   deleteUnverifiedUserById,
+  getFOrgotPasswordUserByEmail,
   getUnverifiedUserByEmail,
   getUserByEmail,
   getUserById,
+  updateForgotPasswordUserById,
   updateUnverifiedUserById,
 } from "../db";
 import { authentication, generateVerificationCode, random } from "../utils";
@@ -112,10 +115,12 @@ export const verifyEmail = async (
   try {
     const { email, verificationCode } = req.body;
 
-    if (!email || !verificationCode) {
-      return res
-        .status(400)
-        .json({ message: "You have not provided all required fields." });
+    if (!verificationCode) {
+      return res.status(400).json({ message: "Reset code was not provided." });
+    }
+
+    if (!email) {
+      return res.status(400).json({ message: "Session timed out." });
     }
 
     const checkUserByEmail = await getUserByEmail(email);
@@ -132,8 +137,7 @@ export const verifyEmail = async (
 
     if (!existingUnverifiedUser || !existingUnverifiedUser.authentication) {
       return res.status(404).json({
-        message:
-          "This email is unrecognized. Please start sign up process again.",
+        message: "Session timed out.",
       });
     }
 
@@ -159,7 +163,7 @@ export const verifyEmail = async (
 
     // const { authentication: authData, ...safeUser } = user;
 
-    return res.status(200).json({ message: "Sign Up successful." }).end();
+    return res.status(200).json({ message: "Sign up successful." }).end();
   } catch (error) {
     await session.abortTransaction();
     console.log(error);
@@ -294,6 +298,126 @@ export const signedInUser = async (
     }
 
     return res.status(200).json(identity).end();
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
+export const requestForgotPasswordCode = async (
+  req: express.Request,
+  res: express.Response
+): Promise<any | Error> => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is not provided." });
+    }
+
+    const existingUser = await getUserByEmail(email);
+
+    if (!existingUser || !existingUser.authentication) {
+      return res
+        .status(404)
+        .json({ message: "User with this email does not exist." });
+    }
+
+    const verification = {
+      code: generateVerificationCode(),
+      expiresAt: Date.now() + 15 * 60 * 1000, // 15 mins
+    };
+
+    const timeVerificationExpiry = verification.expiresAt - Date.now();
+    const response = await resend.emails.send({
+      from: "Flagship Verify <flagshipverify@vvharts.com>",
+      to: email,
+      template: {
+        id: "password-reset-verification-1",
+        variables: {
+          verification_code: verification.code,
+          verification_code_expiry: Math.ceil(
+            timeVerificationExpiry / (1000 * 60)
+          ).toString(),
+        },
+      },
+    });
+
+    if (response.error) {
+      console.error("Resend email error:", response.error);
+      return res.status(500).json({
+        message: "Failed to send reset code email.",
+        error: response.error,
+      });
+    }
+
+    const existingForgotPasswordUser = await getFOrgotPasswordUserByEmail(
+      email
+    );
+
+    if (!existingForgotPasswordUser) {
+      await createForgotPasswordUser({
+        email,
+        code: verification.code,
+        expiresAt: verification.expiresAt,
+      });
+    }
+
+    await updateForgotPasswordUserById(
+      {
+        code: verification.code,
+        expiresAt: verification.expiresAt,
+      },
+      existingForgotPasswordUser?.id
+    );
+
+    return res.status(200).json({
+      message: "Reset code was sent to your email.",
+      data: { email: email, verificationExpires: verification.expiresAt },
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
+export const submitForgotPasswordCode = async (
+  req: express.Request,
+  res: express.Response
+): Promise<any | Error> => {
+  try {
+    const { verificationCode, email } = req.body;
+
+    if (!verificationCode) {
+      return res.status(400).json({ message: "Reset code was not provided." });
+    }
+
+    if (!email) {
+      return res.status(400).json({ message: "Session timed out." });
+    }
+
+    const existingForgotPasswordUser = await getFOrgotPasswordUserByEmail(
+      email
+    );
+
+    if (!existingForgotPasswordUser) {
+      return res.status(404).json({
+        message: "Session timed out.",
+      });
+    }
+
+    if (verificationCode !== existingForgotPasswordUser.code) {
+      return res.status(404).json({
+        message: "Incorrect verification code.",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Verification succesful.",
+      data: {
+        email,
+      },
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Something went wrong." });

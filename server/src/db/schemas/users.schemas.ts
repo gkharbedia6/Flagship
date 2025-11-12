@@ -29,8 +29,20 @@ const UnverifiedUserSchema = new mongoose.Schema({
 
 UnverifiedUserSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 60 });
 
+const ForgotPasswordUserSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  code: { type: String, required: true },
+  expiresAt: { type: Date, required: true },
+});
+
+ForgotPasswordUserSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 60 });
+
 export const UserModel = mongoose.model("User", UserSchema);
 export const UnverifiedUserModel = mongoose.model(
   "Verification",
   UnverifiedUserSchema
+);
+export const ForgotPasswordUserModel = mongoose.model(
+  "Forgot Password",
+  ForgotPasswordUserSchema
 );

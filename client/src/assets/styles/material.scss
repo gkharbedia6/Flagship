@@ -6,6 +6,26 @@
 @use '@angular/material' as mat;
 @use './themes/blue-theme.css';
 
+:root {
+  @include mat.button-overrides(
+    (
+      outlined-container-shape: var(--mat-sys-corner-small),
+    )
+  );
+  @include mat.snack-bar-overrides(
+    (
+      button-color: #005ac2,
+      container-color: #f4f3f6,
+      supporting-text-color: black,
+    )
+  );
+  @include mat.card-overrides(
+    (
+      outlined-container-color: #f4f3f6,
+    )
+  );
+}
+
 html {
   @include mat.theme(
     (
@@ -39,12 +59,4 @@ body {
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
-}
-
-.button-small-rounded {
-  @include mat.button-overrides(
-    (
-      outlined-container-shape: var(--mat-sys-corner-small),
-    )
-  );
 }

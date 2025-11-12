@@ -61,6 +61,7 @@ import { AuthFacadeService } from '../../data/auth';
             (click)="showPassword($event)"
             [attr.aria-label]="'Hide password'"
             [attr.aria-pressed]="hide()"
+            type="button"
           >
             <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
@@ -72,13 +73,18 @@ import { AuthFacadeService } from '../../data/auth';
         <mat-error>{{ this.authFacade.getError()?.error.message }}</mat-error>
         }
         <mat-card-actions class="mt-2 flex items-center justify-center w-full">
-          <button type="submit" matButton="outlined" class="button-small-rounded w-full">
+          <button
+            [disabled]="this.authFacade.getIsLoading()"
+            type="submit"
+            matButton="outlined"
+            class="w-full"
+          >
+            <span> Sign In</span>
             @if(this.authFacade.getIsLoading()) {
-            <mat-icon fontSet="material-symbols-outlined" class="!m-0 animate-spin"
+            <mat-icon fontSet="material-symbols-outlined" class=" animate-spin"
               >progress_activity</mat-icon
             >
-
-            } @else { Sign In }
+            }
           </button>
         </mat-card-actions>
       </form>

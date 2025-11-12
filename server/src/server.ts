@@ -45,8 +45,8 @@ if (!ATLAS_URI) {
 
 mongoose.Promise = Promise;
 mongoose.connect(ATLAS_URI);
-mongoose.connection.on("error", (err: Error) => {
-  console.log(err);
+mongoose.connection.on("error", (error: Error) => {
+  console.log(error);
 });
 
 app.use("/api", router());

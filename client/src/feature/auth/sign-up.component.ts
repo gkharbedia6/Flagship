@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
@@ -49,6 +49,7 @@ import { AuthFacadeService } from '../../data/auth';
             (click)="showPassword($event)"
             [attr.aria-label]="'Hide password'"
             [attr.aria-pressed]="hide()"
+            type="button"
           >
             <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
@@ -67,6 +68,7 @@ import { AuthFacadeService } from '../../data/auth';
             (click)="showPassword($event)"
             [attr.aria-label]="'Hide password'"
             [attr.aria-pressed]="hide()"
+            type="button"
           >
             <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
@@ -81,21 +83,25 @@ import { AuthFacadeService } from '../../data/auth';
         <mat-error>{{ this.authFacade.getError()?.error.message }}</mat-error>
         }
         <mat-card-actions class="mt-2  flex items-center justify-center w-full">
-          <button type="submit" class="w-full button-small-rounded" matButton="outlined">
+          <button
+            [disabled]="this.authFacade.getIsLoading()"
+            type="submit"
+            class="w-full "
+            matButton="outlined"
+          >
+            <span>Sign Up </span>
             @if(this.authFacade.getIsLoading()) {
-            <mat-icon fontSet="material-symbols-outlined" class="!m-0 animate-spin"
+            <mat-icon fontSet="material-symbols-outlined" class="animate-spin"
               >progress_activity</mat-icon
             >
-            } @else { Sign Up }
+            }
           </button>
         </mat-card-actions>
       </form>
 
       <div class="flex flex-row mt-10 items-center justify-center gap-1">
         <p>Already have an account?</p>
-        <a routerLink="/auth/sign-in" class="cursor-pointer underline hover:opacity-80"
-          >Sign In Now</a
-        >
+        <a routerLink="/auth/sign-in" class="cursor-pointer underline hover:opacity-80">Sign In</a>
       </div>
     </div>
   `,

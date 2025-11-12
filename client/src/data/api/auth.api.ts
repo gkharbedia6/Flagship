@@ -1,5 +1,14 @@
 import { inject, Injectable } from '@angular/core';
-import { iSignInForm, iSignUpForm, iSignUpResponse, iUser, iVerificationForm } from '../../types';
+import {
+  iSignInForm,
+  iSignUpForm,
+  iSignUpResponse,
+  iSubmitCodeForm,
+  iSubmitCodeResponse,
+  iUser,
+  iVerificationForm,
+  iVerifyEmailResponse,
+} from '../../types';
 import { Observable } from 'rxjs';
 import { HttpRequestService } from '../http';
 
@@ -14,11 +23,11 @@ export class AuthApiService {
     return this._httpRequest.post(`${this._baseUrl}/sign-up`, body);
   }
 
-  verifyEmail(body: iVerificationForm): Observable<any> {
+  verifyEmail(body: iVerificationForm): Observable<iVerifyEmailResponse> {
     return this._httpRequest.post(`${this._baseUrl}/email-verification`, body);
   }
 
-  signIn(body: iSignInForm): Observable<any> {
+  signIn(body: iSignInForm): Observable<iUser> {
     return this._httpRequest.post(`${this._baseUrl}/sign-in`, body);
   }
 
@@ -28,5 +37,13 @@ export class AuthApiService {
 
   getCurrentUser(): Observable<any> {
     return this._httpRequest.get(`${this._baseUrl}/me`);
+  }
+
+  requestForgotPasswordCode(email: string): Observable<any> {
+    return this._httpRequest.post(`${this._baseUrl}/request-code`, { email });
+  }
+
+  submitCode(body: iSubmitCodeForm): Observable<iSubmitCodeResponse> {
+    return this._httpRequest.post(`${this._baseUrl}/submit-code`, body);
   }
 }

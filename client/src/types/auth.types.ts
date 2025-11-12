@@ -3,6 +3,11 @@ export interface iVerificationForm {
   verificationCode: string;
 }
 
+export interface iSubmitCodeForm {
+  email: string;
+  verificationCode: string;
+}
+
 export interface iSignUpForm {
   email: string;
   password: string;
@@ -16,8 +21,21 @@ export interface iSignUpResponse {
   };
 }
 
+export interface iForgotPasswordResponse {
+  message: string;
+  data: {
+    email: string;
+    verificationExpires: number;
+  };
+}
+
 export interface iVerifyEmailResponse {
   message: string;
+}
+
+export interface iSubmitCodeResponse {
+  message: string;
+  data: { email: string };
 }
 
 export interface iUser {
