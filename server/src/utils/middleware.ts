@@ -23,7 +23,7 @@ export const isOwner = async (
     return next();
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ message: "Something went wrong." });
+    return res.status(500).json({ message: "Something went wrong." });
   }
 };
 
@@ -72,6 +72,6 @@ export const isAuthenticated = async (
     return next();
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ message: "Something went wrong." });
+    return res.status(500).json({ message: "Something went wrong." });
   }
 };

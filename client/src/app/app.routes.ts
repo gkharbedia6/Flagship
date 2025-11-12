@@ -1,15 +1,17 @@
 import { Routes } from '@angular/router';
-import { AuthLayoutComponent } from '../feature/auth/layout/Auth.component';
-import { ForgotPassword } from '../feature/auth/forgot-password.component';
 import { AuthGuard } from '../utils/guards/auth.guard';
 import { SignInComponent } from '../feature/auth/sign-in.component';
 import { SignUpComponent } from '../feature/auth/sign-up.component';
 import { LandingComponent } from '../feature/landing/landing.component';
+import { GuestGuard } from '../utils/guards/guest.guard';
+import { AuthLayoutComponent } from '../feature/auth/layout/auth.component';
+import { VerifyEmailGuard } from '../utils/guards/verify-email.guard';
 
 export const routes: Routes = [
   {
     path: 'auth',
     component: AuthLayoutComponent,
+    canActivate: [GuestGuard],
     children: [
       { path: '', redirectTo: 'sign-in', pathMatch: 'full' },
       {
@@ -17,13 +19,22 @@ export const routes: Routes = [
         component: SignUpComponent,
       },
       { path: 'sign-in', component: SignInComponent },
+      {
+        path: 'verify-email',
+        loadComponent: () =>
+          import('../feature/auth/verify-email.component').then((c) => c.VerifyEmailComponent),
+        canActivate: [VerifyEmailGuard],
+      },
+      {
+        path: 'forgot-password',
+        loadComponent: () =>
+          import('../feature/auth/forgot-password.component').then((c) => c.ForgotPassword),
+      },
     ],
   },
-  { path: 'forgot-password', component: ForgotPassword },
   {
     path: '',
     component: LandingComponent,
-    pathMatch: 'full',
     canActivate: [AuthGuard],
     children: [
       {

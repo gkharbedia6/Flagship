@@ -5,12 +5,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { matchPasswordValidator } from '../../utils';
-import { HttpErrorResponse } from '@angular/common/http';
-import { iUser } from '../../types';
-import { AuthApiService } from '../../data/api';
+import { AuthFacadeService } from '../../data/auth';
 
 @Component({
   selector: 'auth-sign-up',
@@ -32,20 +30,13 @@ import { AuthApiService } from '../../data/api';
         <p class="m-0 text-lg text-black">Get started</p>
         <p class="m-0 text-sm text-black opacity-70">Create a new account</p>
       </div>
-      <form class="flex flex-col gap-1 w-full" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-        <mat-form-field class="w-full">
-          <mat-label>Username</mat-label>
-          <input formControlName="username" matInput />
-          @if (this.registerForm.controls['username'].hasError('required')) {
-          <mat-error>Username is required. </mat-error>
-          }
-        </mat-form-field>
+      <form class="flex flex-col gap-1 w-full" [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
         <mat-form-field class="w-full">
           <mat-label>Email</mat-label>
           <input formControlName="email" matInput />
-          @if (this.registerForm.controls['email'].hasError('required')) {
+          @if (this.signUpForm.controls['email'].hasError('required')) {
           <mat-error>Email is required. </mat-error>
-          } @else if (this.registerForm.controls['email'].hasError('email')) {
+          } @else if (this.signUpForm.controls['email'].hasError('email')) {
           <mat-error>Email must be correct format.</mat-error>
           }
         </mat-form-field>
@@ -61,9 +52,9 @@ import { AuthApiService } from '../../data/api';
           >
             <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
-          @if (this.registerForm.controls['password'].hasError('required')) {
+          @if (this.signUpForm.controls['password'].hasError('required')) {
           <mat-error>Password is required. </mat-error>
-          } @else if (this.registerForm.controls['password'].hasError('minlength')) {
+          } @else if (this.signUpForm.controls['password'].hasError('minlength')) {
           <mat-error>Password must be minimum 6 characters. </mat-error>
           }
         </mat-form-field>
@@ -79,23 +70,22 @@ import { AuthApiService } from '../../data/api';
           >
             <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
-          @if (this.registerForm.controls['confirmPassword'].hasError('required')) {
+          @if (this.signUpForm.controls['confirmPassword'].hasError('required')) {
           <mat-error>Password is required. </mat-error>
-          } @else if (this.registerForm.controls['confirmPassword'].hasError('passwordMismatch')) {
+          } @else if (this.signUpForm.controls['confirmPassword'].hasError('passwordMismatch')) {
           <mat-error>Passwords do not match. </mat-error>
 
           }
         </mat-form-field>
-        @if(this.registerError()) {
-        <mat-error>{{ this.registerError()?.error.message }}</mat-error>
+        @if(this.authFacade.getError()) {
+        <mat-error>{{ this.authFacade.getError()?.error.message }}</mat-error>
         }
         <mat-card-actions class="mt-2  flex items-center justify-center w-full">
           <button type="submit" class="w-full button-small-rounded" matButton="outlined">
-            @if(this.isLoading()) {
+            @if(this.authFacade.getIsLoading()) {
             <mat-icon fontSet="material-symbols-outlined" class="!m-0 animate-spin"
               >progress_activity</mat-icon
             >
-
             } @else { Sign Up }
           </button>
         </mat-card-actions>
@@ -110,53 +100,30 @@ import { AuthApiService } from '../../data/api';
     </div>
   `,
 })
-export class SignUpComponent implements OnInit {
-  private _authApi = inject(AuthApiService);
-  private router = inject(Router);
+export class SignUpComponent {
+  authFacade = inject(AuthFacadeService);
   hide = signal(true);
-  isLoading = signal(false);
   showPassword(event: MouseEvent) {
     this.hide.set(!this.hide());
     event.stopPropagation();
   }
-  registerError = signal<HttpErrorResponse | null>(null);
 
-  registerForm = new FormGroup(
+  signUpForm = new FormGroup(
     {
-      username: new FormControl('', Validators.required),
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-      confirmPassword: new FormControl('', [Validators.required]),
+      email: new FormControl('giorgikharbedia6@gmail.com', [Validators.required, Validators.email]),
+      password: new FormControl('123123', [Validators.required, Validators.minLength(6)]),
+      confirmPassword: new FormControl('123123', [Validators.required]),
     },
     {
       validators: matchPasswordValidator,
     }
   );
 
-  ngOnInit(): void {}
-
   onSubmit() {
-    this.isLoading.set(true);
-    if (!this.registerForm.valid) {
-      this.isLoading.set(false);
-      return;
-    }
-    const { username, email, password } = this.registerForm.value;
-    if (!username || !email || !password) {
-      this.isLoading.set(false);
-      return;
-    }
-    this._authApi.signUp({ username, email, password }).subscribe({
-      next: (response: iUser) => {
-        console.log(response);
-        this.registerError.set(null);
-        this.isLoading.set(false);
-        this.router.navigate(['/auth/sign-in']);
-      },
-      error: (error: any) => {
-        this.isLoading.set(false);
-        this.registerError.set(error);
-      },
-    });
+    if (!this.signUpForm.valid) return;
+    const { email, password } = this.signUpForm.value;
+    if (!email || !password) return;
+
+    this.authFacade.signUp(email, password);
   }
 }

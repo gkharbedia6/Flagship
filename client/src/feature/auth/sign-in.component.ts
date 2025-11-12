@@ -47,7 +47,7 @@ import { AuthFacadeService } from '../../data/auth';
           }
         </mat-form-field>
         <div class="w-full flex flex-row justify-end">
-          <a routerLink="/forgot-password" class="m-0 mb-2 cursor-pointer hover:opacity-80"
+          <a routerLink="/auth/forgot-password" class="m-0 mb-2 cursor-pointer hover:opacity-80"
             >Forgot Password?</a
           >
         </div>
@@ -102,7 +102,7 @@ export class SignInComponent {
   }
 
   loginForm = new FormGroup({
-    email: new FormControl('gasana@gmail.com', [Validators.email, Validators.required]),
+    email: new FormControl('giorgikharbedia6@gmail.com', [Validators.email, Validators.required]),
     password: new FormControl('123123', Validators.required),
   });
 

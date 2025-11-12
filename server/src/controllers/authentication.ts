@@ -1,31 +1,30 @@
 import express from "express";
 import {
+  createUnvefiriedUser,
   createUser,
+  deleteUnverifiedUserById,
+  getUnverifiedUserByEmail,
   getUserByEmail,
   getUserById,
-  getUserByUsername,
+  updateUnverifiedUserById,
 } from "../db";
-import { authentication, random } from "../utils";
+import { authentication, generateVerificationCode, random } from "../utils";
+import { Resend } from "resend";
+import mongoose from "mongoose";
+
+const resend = new Resend("re_2pXTXX7o_3SbDc88z8k1UYdwzneWtrAsn");
 
 export const signUp = async (
   req: express.Request,
   res: express.Response
 ): Promise<any | Error> => {
   try {
-    const { username, password, email } = req.body;
+    const { email, password } = req.body;
 
-    if (!username || !password || !email) {
+    if (!password || !email) {
       return res
         .status(400)
         .json({ message: "You have not provided all required fields." });
-    }
-
-    const checkUserByUsername = await getUserByUsername(username);
-
-    if (checkUserByUsername) {
-      return res
-        .status(400)
-        .json({ message: "User with that username already exists." });
     }
 
     const checkUserByEmail = await getUserByEmail(email);
@@ -36,21 +35,137 @@ export const signUp = async (
         .json({ message: "User with that email already exists." });
     }
 
-    const salt = random();
+    const verification = {
+      code: generateVerificationCode(),
+      expiresAt: Date.now() + 15 * 60 * 1000, // 15 mins
+    };
 
-    const user = await createUser({
-      username,
-      email,
-      authentication: {
-        salt,
-        password: authentication(salt, password),
+    const timeVerificationExpiry = verification.expiresAt - Date.now();
+
+    const response = await resend.emails.send({
+      from: "Flagship Verify <flagshipverify@vvharts.com>",
+      to: email,
+      template: {
+        id: "email-verification-code",
+        variables: {
+          verification_code: verification.code,
+          verification_code_expiry: Math.ceil(
+            timeVerificationExpiry / (1000 * 60)
+          ).toString(),
+        },
       },
     });
 
-    return res.status(200).json(user).end();
+    if (response.error) {
+      console.error("Resend email error:", response.error);
+      return res.status(500).json({
+        message: "Failed to send verification email.",
+        error: response.error,
+      });
+    }
+
+    const existingUnverifiedUser = await getUnverifiedUserByEmail(email);
+
+    const salt = random();
+
+    if (!existingUnverifiedUser) {
+      await createUnvefiriedUser({
+        email,
+        code: verification.code,
+        expiresAt: verification.expiresAt,
+        authentication: {
+          salt,
+          password: authentication(salt, password),
+        },
+      });
+    }
+
+    await updateUnverifiedUserById(
+      {
+        code: verification.code,
+        expiresAt: verification.expiresAt,
+      },
+      existingUnverifiedUser?.id
+    );
+
+    const sendVerificationResponse = {
+      email,
+      verificationExpires: verification.expiresAt,
+    };
+
+    return res.status(200).json({
+      message: "Verification code was sent to your email.",
+      data: sendVerificationResponse,
+    });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ message: "Something went wrong." });
+    return res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
+export const verifyEmail = async (
+  req: express.Request,
+  res: express.Response
+): Promise<any | Error> => {
+  const session = await mongoose.startSession();
+
+  try {
+    const { email, verificationCode } = req.body;
+
+    if (!email || !verificationCode) {
+      return res
+        .status(400)
+        .json({ message: "You have not provided all required fields." });
+    }
+
+    const checkUserByEmail = await getUserByEmail(email);
+
+    if (checkUserByEmail) {
+      return res
+        .status(400)
+        .json({ message: "User with that email already exists." });
+    }
+
+    const existingUnverifiedUser = await getUnverifiedUserByEmail(email).select(
+      "+authentication.salt +authentication.password"
+    );
+
+    if (!existingUnverifiedUser || !existingUnverifiedUser.authentication) {
+      return res.status(404).json({
+        message:
+          "This email is unrecognized. Please start sign up process again.",
+      });
+    }
+
+    if (verificationCode !== existingUnverifiedUser.code) {
+      return res.status(404).json({
+        message: "Incorrect verification code.",
+      });
+    }
+
+    session.startTransaction();
+
+    const user = await createUser({
+      email,
+      authentication: {
+        password: existingUnverifiedUser.authentication.password,
+        salt: existingUnverifiedUser.authentication.salt,
+      },
+    });
+
+    await deleteUnverifiedUserById(existingUnverifiedUser.id);
+
+    await session.commitTransaction();
+
+    // const { authentication: authData, ...safeUser } = user;
+
+    return res.status(200).json({ message: "Sign Up successful." }).end();
+  } catch (error) {
+    await session.abortTransaction();
+    console.log(error);
+    return res.status(500).json({ message: "Something went wrong." });
+  } finally {
+    session.endSession();
   }
 };
 
@@ -122,7 +237,7 @@ export const signIn = async (
     return res.status(200).json(safeUser).end();
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ message: "Something went wrong." });
+    return res.status(500).json({ message: "Something went wrong." });
   }
 };
 
@@ -159,7 +274,7 @@ export const signOut = async (
     return res.status(200).json({ messsage: "Logged out." });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ message: "Something went wrong." });
+    return res.status(500).json({ message: "Something went wrong." });
   }
 };
 
@@ -181,6 +296,6 @@ export const signedInUser = async (
     return res.status(200).json(identity).end();
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ message: "Something went wrong." });
+    return res.status(500).json({ message: "Something went wrong." });
   }
 };

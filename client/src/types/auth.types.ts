@@ -1,12 +1,29 @@
+export interface iVerificationForm {
+  email: string;
+  verificationCode: string;
+}
+
 export interface iSignUpForm {
-  username: string;
   email: string;
   password: string;
 }
 
+export interface iSignUpResponse {
+  message: string;
+  data: {
+    email: string;
+    verificationExpires: number;
+  };
+}
+
+export interface iVerifyEmailResponse {
+  message: string;
+}
+
 export interface iUser {
   _id: string;
-  username: string;
+  fullName?: string;
+  username?: string;
   email: string;
   authentication: {
     password: string;
