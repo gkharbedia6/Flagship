@@ -3,19 +3,23 @@ import {
   createForgotPasswordUser,
   createUnvefiriedUser,
   createUser,
+  deleteForgotPasswordUserById,
   deleteUnverifiedUserById,
-  getFOrgotPasswordUserByEmail,
+  getForgotPasswordUserByEmail,
   getUnverifiedUserByEmail,
   getUserByEmail,
   getUserById,
   updateForgotPasswordUserById,
   updateUnverifiedUserById,
+  updateUserById,
 } from "../db";
 import { authentication, generateVerificationCode, random } from "../utils";
 import { Resend } from "resend";
 import mongoose from "mongoose";
 
-const resend = new Resend("re_2pXTXX7o_3SbDc88z8k1UYdwzneWtrAsn");
+const resendKey = process.env.RESEND_KEY as string;
+
+const resend = new Resend(resendKey);
 
 export const signUp = async (
   req: express.Request,
@@ -81,15 +85,15 @@ export const signUp = async (
           password: authentication(salt, password),
         },
       });
+    } else {
+      await updateUnverifiedUserById(
+        {
+          code: verification.code,
+          expiresAt: verification.expiresAt,
+        },
+        existingUnverifiedUser?.id
+      );
     }
-
-    await updateUnverifiedUserById(
-      {
-        code: verification.code,
-        expiresAt: verification.expiresAt,
-      },
-      existingUnverifiedUser?.id
-    );
 
     const sendVerificationResponse = {
       email,
@@ -191,13 +195,13 @@ export const signIn = async (
     );
 
     if (!user || !user.authentication || !user.authentication.salt) {
-      return res.status(400).json({ message: "User does not exist." });
+      return res.status(404).json({ message: "User does not exist." });
     }
 
     const expectedHash = authentication(user.authentication.salt, password);
 
     if (expectedHash !== user.authentication?.password) {
-      return res.status(400).json({ message: "Incorrect password." });
+      return res.status(400).json({ message: "Incorrect credentials." });
     }
 
     const sessionSalt = random();
@@ -351,29 +355,36 @@ export const requestForgotPasswordCode = async (
       });
     }
 
-    const existingForgotPasswordUser = await getFOrgotPasswordUserByEmail(
+    const existingForgotPasswordUser = await getForgotPasswordUserByEmail(
       email
     );
+    let newForgotPasswordUser;
 
     if (!existingForgotPasswordUser) {
-      await createForgotPasswordUser({
+      newForgotPasswordUser = await createForgotPasswordUser({
         email,
         code: verification.code,
         expiresAt: verification.expiresAt,
       });
+    } else {
+      await updateForgotPasswordUserById(
+        {
+          code: verification.code,
+          expiresAt: verification.expiresAt,
+        },
+        existingForgotPasswordUser?.id
+      );
     }
-
-    await updateForgotPasswordUserById(
-      {
-        code: verification.code,
-        expiresAt: verification.expiresAt,
-      },
-      existingForgotPasswordUser?.id
-    );
 
     return res.status(200).json({
       message: "Reset code was sent to your email.",
-      data: { email: email, verificationExpires: verification.expiresAt },
+      data: {
+        email: email,
+        verificationExpires: verification.expiresAt,
+        forgotPasswordUserId: existingForgotPasswordUser
+          ? existingForgotPasswordUser.id
+          : newForgotPasswordUser?._id,
+      },
     });
   } catch (error) {
     console.log(error);
@@ -396,7 +407,7 @@ export const submitForgotPasswordCode = async (
       return res.status(400).json({ message: "Session timed out." });
     }
 
-    const existingForgotPasswordUser = await getFOrgotPasswordUserByEmail(
+    const existingForgotPasswordUser = await getForgotPasswordUserByEmail(
       email
     );
 
@@ -421,5 +432,60 @@ export const submitForgotPasswordCode = async (
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
+export const recoverPassword = async (
+  req: express.Request,
+  res: express.Response
+): Promise<any | Error> => {
+  const session = await mongoose.startSession();
+  try {
+    const { id: forgotId, email, password: newPassword } = req.body;
+
+    if (!newPassword) {
+      return res.status(400).json({ message: "Password is not provided." });
+    }
+
+    if (!email || !forgotId) {
+      return res.status(400).json({ message: "Session timed out." });
+    }
+
+    const existingUser = await getUserByEmail(email).select(
+      "+authentication.salt +authentication.password"
+    );
+
+    if (!existingUser || !existingUser.authentication) {
+      return res.status(404).json({ message: "User does not exist." });
+    }
+
+    session.startTransaction();
+
+    const salt = random();
+
+    const newAuthentication = {
+      ...existingUser.authentication,
+      salt: salt,
+      password: authentication(salt, newPassword),
+    };
+
+    await updateUserById(
+      {
+        authentication: newAuthentication,
+      },
+      existingUser.id
+    );
+
+    await deleteForgotPasswordUserById(forgotId);
+
+    await session.commitTransaction();
+
+    return res.status(200).json({ message: "Password successfuly updated." });
+  } catch (error) {
+    session.abortTransaction();
+    console.log(error);
+    return res.status(500).json({ message: "Something went wrong." });
+  } finally {
+    session.endSession();
   }
 };

@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import {
+  iRecoverPasswordForm,
   iSignInForm,
   iSignUpForm,
   iSignUpResponse,
@@ -45,5 +46,9 @@ export class AuthApiService {
 
   submitCode(body: iSubmitCodeForm): Observable<iSubmitCodeResponse> {
     return this._httpRequest.post(`${this._baseUrl}/submit-code`, body);
+  }
+
+  recoverPassowrd(body: iRecoverPasswordForm): Observable<any> {
+    return this._httpRequest.post(`${this._baseUrl}/recover-password`, body);
   }
 }

@@ -1,6 +1,6 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { AuthApiService } from '../api';
-import { filter, tap, throwError } from 'rxjs';
+import { filter, tap } from 'rxjs';
 import { AuthStateService } from './auth.state';
 import { iSignUpResponse, iSubmitCodeResponse, iUser, iVerifyEmailResponse } from '../../types';
 import { NavigationStart, Router } from '@angular/router';
@@ -25,7 +25,7 @@ export class AuthFacadeService {
       .subscribe(() => {
         this._state.setError(null);
         this._state.setIsLoading(false);
-        this._state.setForgotPasswordStep('submit_code');
+        this._state.setForgotPasswordStep('request_code');
       });
   }
 
@@ -127,6 +127,7 @@ export class AuthFacadeService {
           this._router.navigateByUrl(url);
         },
         error: (error: HttpErrorResponse) => {
+          console.log(error);
           this._state.setError(error);
           this._state.setIsLoading(false);
         },
@@ -171,6 +172,35 @@ export class AuthFacadeService {
           this._state.setIsLoading(false);
         },
         error: (error: HttpErrorResponse) => {
+          this._state.setIsLoading(false);
+          this._state.setError(error);
+        },
+      });
+  }
+
+  recoverPassword(password: string) {
+    this._state.setIsLoading(true);
+    const sessionEmail = this._state.getForgotPasswordSession()?.email;
+    const sessionId = this._state.getForgotPasswordSession()?.forgotPasswordUserId;
+    if (!sessionEmail || !sessionId) {
+      this._state.setIsLoading(false);
+      this._state.setForgotPasswordStep('request_code');
+      throw new Error('Session timed out.');
+    }
+    return this._authApi
+      .recoverPassowrd({ password, email: sessionEmail, id: sessionId })
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          // add alert
+          this._state.clearForgotPasswordSession();
+          this._router.navigate(['/auth/sign-in']);
+          this._state.setError(null);
+          this._state.setIsLoading(false);
+        },
+        error: (error: HttpErrorResponse) => {
+          console.log(error);
           this._state.setIsLoading(false);
           this._state.setError(error);
         },

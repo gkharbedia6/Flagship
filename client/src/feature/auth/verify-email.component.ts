@@ -44,7 +44,6 @@ export class VerifyEmailComponent implements OnInit {
     if (!this.verifyEmailForm.valid) return;
     const { verificationCode } = this.verifyEmailForm.value;
     if (!verificationCode) return;
-    console.log(verificationCode);
     this.authFacade.verifyEmail(verificationCode);
   }
 }

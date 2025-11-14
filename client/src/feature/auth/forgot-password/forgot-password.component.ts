@@ -50,7 +50,5 @@ import { AuthFacadeService } from '../../../data/auth';
 export class ForgotPassword {
   authFacade = inject(AuthFacadeService);
 
-  constructor() {
-    console.log(this.authFacade.getForgotPasswordStep());
-  }
+  constructor() {}
 }

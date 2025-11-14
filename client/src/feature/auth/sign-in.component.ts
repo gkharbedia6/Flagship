@@ -109,7 +109,7 @@ export class SignInComponent {
 
   loginForm = new FormGroup({
     email: new FormControl('giorgikharbedia6@gmail.com', [Validators.email, Validators.required]),
-    password: new FormControl('123123', Validators.required),
+    password: new FormControl('222222', Validators.required),
   });
 
   onSubmit() {

@@ -8,7 +8,18 @@ export interface iSubmitCodeForm {
   verificationCode: string;
 }
 
+export interface iRecoverPasswordForm {
+  email: string;
+  id: string;
+  password: string;
+}
+
 export interface iSignUpForm {
+  email: string;
+  password: string;
+}
+
+export interface iSignInForm {
   email: string;
   password: string;
 }
@@ -26,6 +37,7 @@ export interface iForgotPasswordResponse {
   data: {
     email: string;
     verificationExpires: number;
+    forgotPasswordUserId: string;
   };
 }
 
@@ -49,9 +61,4 @@ export interface iUser {
   };
   createdAt: string;
   updatedAt: string;
-}
-
-export interface iSignInForm {
-  email: string;
-  password: string;
 }

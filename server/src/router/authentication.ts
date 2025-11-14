@@ -1,6 +1,7 @@
 import express from "express";
 import { isAuthenticated } from "../utils/middleware";
 import {
+  recoverPassword,
   requestForgotPasswordCode,
   signedInUser,
   signIn,
@@ -18,4 +19,5 @@ export default (router: express.Router) => {
   router.get("/auth/me", isAuthenticated, signedInUser);
   router.post("/auth/request-code", requestForgotPasswordCode);
   router.post("/auth/submit-code", submitForgotPasswordCode);
+  router.post("/auth/recover-password", recoverPassword);
 };

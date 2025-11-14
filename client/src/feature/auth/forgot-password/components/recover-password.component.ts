@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormField } from '@angular/material/form-field';
@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { matchPasswordValidator } from '../../../../utils';
+import { AuthFacadeService } from '../../../../data/auth';
 
 @Component({
   selector: 'recover-password',
@@ -58,20 +59,29 @@ import { matchPasswordValidator } from '../../../../utils';
 
         }
       </mat-form-field>
+      @if(this.authFacade.getError()) {
+      <mat-error>{{ this.authFacade.getError()?.error.message }}</mat-error>
+      }
       <mat-card-actions class="mt-2  flex items-center justify-center w-full">
-        <button type="submit" class="w-full" matButton="outlined">
-          @if(false) {
-          <mat-icon fontSet="material-symbols-outlined" class="!m-0 animate-spin"
+        <button
+          [disabled]="this.authFacade.getIsLoading()"
+          type="submit"
+          class="w-full"
+          matButton="outlined"
+        >
+          <span>Save new password</span>
+          @if(this.authFacade.getIsLoading()) {
+          <mat-icon fontSet="material-symbols-outlined" class="animate-spin"
             >progress_activity</mat-icon
           >
-
-          } @else { Reset password }
+          }
         </button>
       </mat-card-actions>
     </form>
   `,
 })
 export class RecoverPasswordComponent {
+  authFacade = inject(AuthFacadeService);
   hide = signal(true);
   showPassword(event: MouseEvent) {
     this.hide.set(!this.hide());
@@ -80,8 +90,8 @@ export class RecoverPasswordComponent {
 
   recoverPassword = new FormGroup(
     {
-      password: new FormControl('123123', [Validators.required, Validators.minLength(6)]),
-      confirmPassword: new FormControl('123123', [Validators.required]),
+      password: new FormControl('222222', [Validators.required, Validators.minLength(6)]),
+      confirmPassword: new FormControl('222222', [Validators.required]),
     },
     {
       validators: matchPasswordValidator,
@@ -92,6 +102,6 @@ export class RecoverPasswordComponent {
     if (!this.recoverPassword.valid) return;
     const { password } = this.recoverPassword.value;
     if (!password) return;
-    console.log(password);
+    this.authFacade.recoverPassword(password);
   }
 }

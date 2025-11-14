@@ -13,7 +13,7 @@ export const getUserByEmail = (email: string) => UserModel.findOne({ email });
 export const getUnverifiedUserByEmail = (email: string) =>
   UnverifiedUserModel.findOne({ email });
 
-export const getFOrgotPasswordUserByEmail = (email: string) =>
+export const getForgotPasswordUserByEmail = (email: string) =>
   ForgotPasswordUserModel.findOne({ email });
 
 export const getUserByUsername = (username: string) =>
