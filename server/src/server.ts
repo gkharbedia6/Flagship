@@ -12,13 +12,14 @@ import { router } from "./router";
 dotenv.config();
 
 const port = process.env.PORT || 8080;
+const isProd = process.env.NODE_ENV === "production";
 
 const app = express();
 
 app.use(
   cors({
+    origin: isProd ? "https://flagship-nu.vercel.app" : "http://localhost:4200",
     credentials: true,
-    origin: "http://localhost:4200",
   })
 );
 

@@ -18,6 +18,7 @@ import { Resend } from "resend";
 import mongoose from "mongoose";
 
 const resendKey = process.env.RESEND_KEY as string;
+const isProd = process.env.NODE_ENV === "production";
 
 const resend = new Resend(resendKey);
 
@@ -167,6 +168,8 @@ export const verifyEmail = async (
 
     // const { authentication: authData, ...safeUser } = user;
 
+    // send user is or email here as the res
+
     return res.status(200).json({ message: "Sign up successful." }).end();
   } catch (error) {
     await session.abortTransaction();
@@ -221,8 +224,8 @@ export const signIn = async (
 
     res.cookie("FLAGSHIP_SESSION_TOKEN", user.authentication.sessionToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
       path: "/",
       // maxAge: 1 * 60 * 1000,
       maxAge: 60 * 60 * 1000,
@@ -230,8 +233,8 @@ export const signIn = async (
 
     res.cookie("FLAGSHIP_REFRESH_TOKEN", user.authentication.refreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
       path: "/",
       // maxAge: 2 * 60 * 60 * 1000,
       maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -271,12 +274,16 @@ export const signOut = async (
     existingUser.save();
 
     res.clearCookie("FLAGSHIP_SESSION_TOKEN", {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
       path: "/",
-      sameSite: "lax",
     });
     res.clearCookie("FLAGSHIP_REFRESH_TOKEN", {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
       path: "/",
-      sameSite: "lax",
     });
 
     return res.status(200).json({ messsage: "Logged out." });
