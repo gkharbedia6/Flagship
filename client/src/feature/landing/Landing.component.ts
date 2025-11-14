@@ -2,11 +2,7 @@ import { Component, inject, OnInit, WritableSignal } from '@angular/core';
 import { AuthFacadeService } from '../../data/auth';
 import { iUser } from '../../types';
 import { RouterOutlet } from '@angular/router';
-import {
-  MatSnackBar,
-  MatSnackBarHorizontalPosition,
-  MatSnackBarVerticalPosition,
-} from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'landing',

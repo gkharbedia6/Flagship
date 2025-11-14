@@ -2,10 +2,10 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from '../utils/guards/auth.guard';
 import { SignInComponent } from '../feature/auth/sign-in.component';
 import { SignUpComponent } from '../feature/auth/sign-up.component';
-import { LandingComponent } from '../feature/landing/landing.component';
 import { GuestGuard } from '../utils/guards/guest.guard';
-import { AuthLayoutComponent } from '../feature/auth/layout/auth.component';
 import { VerifyEmailGuard } from '../utils/guards/verify-email.guard';
+import { LandingComponent } from '../feature/landing/landing.component';
+import { AuthLayoutComponent } from '../feature/auth/layout/auth.component';
 
 export const routes: Routes = [
   {
