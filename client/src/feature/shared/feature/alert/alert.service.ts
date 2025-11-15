@@ -14,6 +14,7 @@ export class AlertService {
       data: <iAlertRequest>{ message: msg, type: 'request', isLoading },
       horizontalPosition: 'right',
       verticalPosition: 'top',
+      duration: 5000,
     });
   }
 
@@ -27,6 +28,7 @@ export class AlertService {
       data: <iAlertData>{ message: msg, type: 'success' },
       horizontalPosition: 'right',
       verticalPosition: 'top',
+      duration: 5000,
     });
   }
 }
