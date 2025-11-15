@@ -7,6 +7,7 @@ import { NavigationStart, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Location } from '@angular/common';
+import { AlertService } from '../../feature/shared/feature/alert/alert.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthFacadeService {
@@ -15,6 +16,7 @@ export class AuthFacadeService {
   private _router = inject(Router);
   private _destroyRef = inject(DestroyRef);
   private _location = inject(Location);
+  private _alert = inject(AlertService);
 
   constructor() {
     this._router.events
@@ -114,6 +116,7 @@ export class AuthFacadeService {
 
   signIn(email: string, password: string) {
     this._state.setIsLoading(true);
+    this._alert.alertRequesting('Signing in', true);
     return this._authApi
       .signIn({ email, password })
       .pipe(takeUntilDestroyed(this._destroyRef))
@@ -121,6 +124,8 @@ export class AuthFacadeService {
         next: (user: iUser) => {
           this._state.setError(null);
           this._state.setIsLoading(false);
+          this._alert.alertSuccess('Signed in successfully!');
+
           this.handleSignIn(user);
           const returnUrl = this._location.path().split('returnUrl=%2F');
           const url = !returnUrl[1] ? '/' : `/${returnUrl[1]}`;
