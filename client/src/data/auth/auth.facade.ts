@@ -32,7 +32,9 @@ export class AuthFacadeService {
   }
 
   loadCurrentUserInfo() {
-    if (!this._state.getIsAuthenticated()) return;
+    if (!this._state.getIsAuthenticated()) {
+      return;
+    }
     return this._authApi.getCurrentUser().pipe(
       tap((user: iUser) => {
         this.handleSignIn(user);
@@ -127,8 +129,10 @@ export class AuthFacadeService {
           this._alert.alertSuccess('Signed in successfully!');
 
           this.handleSignIn(user);
+          // const url = '/';
           const returnUrl = this._location.path().split('returnUrl=%2F');
-          const url = !returnUrl[1] ? '/' : `/${returnUrl[1]}`;
+          const url = !returnUrl[1] || returnUrl[1] === '' ? '/' : `/${returnUrl[1]}`;
+          console.log(url);
           this._router.navigateByUrl(url);
         },
         error: (error: HttpErrorResponse) => {
@@ -227,7 +231,7 @@ export class AuthFacadeService {
 
   handleSignOut() {
     this._state.setUser(null);
-    this._state.setIsAuthenticated(false);
+    this._state.clearIsAuthenticated();
     this._router.navigateByUrl('/auth');
   }
 }

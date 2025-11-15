@@ -99,9 +99,16 @@ export class AuthStateService {
     this._storage.setItem(this._IS_AUTHENTICATED_KEY, JSON.stringify(b));
   }
 
+  clearIsAuthenticated() {
+    this._storage.removeItem(this._IS_AUTHENTICATED_KEY);
+  }
+
   getIsAuthenticated() {
-    const isAuth = sessionStorage.getItem(this._IS_AUTHENTICATED_KEY);
-    if (!isAuth) return null;
+    const isAuth = this._storage.getItem(this._IS_AUTHENTICATED_KEY);
+    if (!isAuth) {
+      return null;
+    }
+
     return isAuth;
   }
 }
