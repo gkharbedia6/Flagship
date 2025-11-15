@@ -100,6 +100,8 @@ export class AuthStateService {
   }
 
   getIsAuthenticated() {
-    return JSON.parse(this._storage.getItem(this._IS_AUTHENTICATED_KEY) ?? '{}');
+    const isAuth = sessionStorage.getItem(this._IS_AUTHENTICATED_KEY);
+    if (!isAuth) return null;
+    return isAuth;
   }
 }

@@ -26,6 +26,7 @@ export const appConfig: ApplicationConfig = {
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     provideAppInitializer(() => {
       const authFacade = inject(AuthFacadeService);
+
       return authFacade.loadCurrentUserInfo();
     }),
   ],
