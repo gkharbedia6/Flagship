@@ -227,6 +227,7 @@ export const signIn = async (
       secure: isProd,
       sameSite: isProd ? "none" : "lax",
       path: "/",
+      domain: isProd ? "flagship-nu.vercel.app" : "localhost",
       // maxAge: 1 * 60 * 1000,
       maxAge: 60 * 60 * 1000,
     });
@@ -236,6 +237,7 @@ export const signIn = async (
       secure: isProd,
       sameSite: isProd ? "none" : "lax",
       path: "/",
+      domain: isProd ? "flagship-nu.vercel.app" : "localhost",
       // maxAge: 2 * 60 * 60 * 1000,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -277,12 +279,14 @@ export const signOut = async (
       httpOnly: true,
       secure: isProd,
       sameSite: isProd ? "none" : "lax",
+      domain: isProd ? "flagship-nu.vercel.app" : "localhost",
       path: "/",
     });
     res.clearCookie("FLAGSHIP_REFRESH_TOKEN", {
       httpOnly: true,
       secure: isProd,
       sameSite: isProd ? "none" : "lax",
+      domain: isProd ? "flagship-nu.vercel.app" : "localhost",
       path: "/",
     });
 
