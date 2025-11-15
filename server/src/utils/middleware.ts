@@ -3,6 +3,8 @@ import { getUserByRefreshToken } from "../db";
 import { get, merge } from "lodash";
 import { authentication, random } from "./token-encryptor";
 
+const isProd = process.env.NODE_ENV === "production";
+
 export const isOwner = async (
   req: express.Request,
   res: express.Response,
@@ -59,8 +61,8 @@ export const isAuthenticated = async (
         existingUser.authentication?.sessionToken,
         {
           httpOnly: true,
-          secure: false,
-          sameSite: "lax",
+          secure: isProd,
+          sameSite: isProd ? "none" : "lax",
           path: "/",
           maxAge: 60 * 60 * 1000,
         }
