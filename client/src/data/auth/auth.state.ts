@@ -108,7 +108,6 @@ export class AuthStateService {
     if (!isAuth) {
       return null;
     }
-
     return isAuth;
   }
 }

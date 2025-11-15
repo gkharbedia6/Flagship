@@ -33,6 +33,7 @@ export class AuthFacadeService {
 
   loadCurrentUserInfo() {
     if (!this._state.getIsAuthenticated()) {
+      this._router.navigate(['/']);
       return;
     }
     return this._authApi.getCurrentUser().pipe(
@@ -132,6 +133,7 @@ export class AuthFacadeService {
           // const url = '/';
           const returnUrl = this._location.path().split('returnUrl=%2F');
           const url = !returnUrl[1] || returnUrl[1] === '' ? '/' : `/${returnUrl[1]}`;
+
           console.log(url);
           this._router.navigateByUrl(url);
         },
