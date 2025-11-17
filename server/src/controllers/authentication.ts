@@ -51,7 +51,7 @@ export const signUp = async (
     const timeVerificationExpiry = verification.expiresAt - Date.now();
 
     const response = await resend.emails.send({
-      from: "Flagship Verify <flagshipverify@vvharts.com>",
+      from: "Flagship Verify <flagshipverify@flagship-nu.vercel.app>",
       to: email,
       template: {
         id: "email-verification-code",
@@ -341,7 +341,7 @@ export const requestForgotPasswordCode = async (
 
     const timeVerificationExpiry = verification.expiresAt - Date.now();
     const response = await resend.emails.send({
-      from: "Flagship Verify <flagshipverify@vvharts.com>",
+      from: "Flagship Verify <flagshipverify@flagship-nu.vercel.app>",
       to: email,
       template: {
         id: "password-reset-verification-1",

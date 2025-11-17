@@ -13,8 +13,9 @@ export class AuthGuard implements CanActivate {
     const isAuthenticated = this._authFacade.getIsAuthenticated();
     const currentPath = this._location.path();
 
+    console.log('ye2 ', route, state);
+
     if (!isAuthenticated) {
-      // ❗ If already on an auth page, DO NOT add returnUrl
       if (!currentPath.startsWith('/auth') && currentPath !== '') {
         this._router.navigate(['/auth'], {
           queryParams: { returnUrl: currentPath },

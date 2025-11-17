@@ -20,7 +20,7 @@ export class LandingComponent implements OnInit {
   user: WritableSignal<iUser | null> = this._authFacade.getCurrentUser();
 
   ngOnInit(): void {
-    console.log(this.user());
+    // console.log(this.user());
   }
 
   openSnackBar() {

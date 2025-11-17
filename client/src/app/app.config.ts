@@ -20,14 +20,13 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
+    provideAppInitializer(() => {
+      const authFacade = inject(AuthFacadeService);
+      return authFacade.loadCurrentUserInfo();
+    }),
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
     { provide: STORAGE, useValue: localStorage },
     { provide: SESSION_STORAGE, useValue: sessionStorage },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    provideAppInitializer(() => {
-      const authFacade = inject(AuthFacadeService);
-
-      return authFacade.loadCurrentUserInfo();
-    }),
   ],
 };

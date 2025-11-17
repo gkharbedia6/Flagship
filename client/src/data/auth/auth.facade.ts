@@ -1,6 +1,6 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { AuthApiService } from '../api';
-import { filter, tap } from 'rxjs';
+import { catchError, filter, tap, throwError } from 'rxjs';
 import { AuthStateService } from './auth.state';
 import { iSignUpResponse, iSubmitCodeResponse, iUser, iVerifyEmailResponse } from '../../types';
 import { NavigationStart, Router } from '@angular/router';
@@ -33,12 +33,16 @@ export class AuthFacadeService {
 
   loadCurrentUserInfo() {
     if (!this._state.getIsAuthenticated()) {
-      this._router.navigate(['/']);
       return;
     }
     return this._authApi.getCurrentUser().pipe(
       tap((user: iUser) => {
         this.handleSignIn(user);
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.handleSignOut();
+
+        return throwError(() => error);
       })
     );
   }
@@ -103,8 +107,8 @@ export class AuthFacadeService {
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: (response: iVerifyEmailResponse) => {
-          console.log(response.message);
-          // add alert
+          this._alert.alertSuccess(response.message);
+
           this._state.setError(null);
           this._state.setIsLoading(false);
           this._state.clearSignUpSession();
@@ -134,7 +138,6 @@ export class AuthFacadeService {
           const returnUrl = this._location.path().split('returnUrl=%2F');
           const url = !returnUrl[1] || returnUrl[1] === '' ? '/' : `/${returnUrl[1]}`;
 
-          console.log(url);
           this._router.navigateByUrl(url);
         },
         error: (error: HttpErrorResponse) => {
@@ -149,12 +152,10 @@ export class AuthFacadeService {
     this._state.setIsLoading(true);
     return this._authApi.requestForgotPasswordCode(email).subscribe({
       next: (response: any) => {
-        console.log(response);
         this._state.setForgotPasswordStep('submit_code');
         this._state.setForgotPasswordSession(response);
         this._state.setError(null);
         this._state.setIsLoading(false);
-        //  this.resetCodeSuccess.emit();
       },
       error: (error: any) => {
         this._state.setError(error);
@@ -176,8 +177,6 @@ export class AuthFacadeService {
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: (response: iSubmitCodeResponse) => {
-          console.log(response.message);
-          // add alert
           this._state.setForgotPasswordStep('recover_password');
           this._state.setError(null);
           this._state.setIsLoading(false);
@@ -203,8 +202,7 @@ export class AuthFacadeService {
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: (response: any) => {
-          console.log(response);
-          // add alert
+          this._alert.alertSuccess(response.message);
           this._state.clearForgotPasswordSession();
           this._router.navigate(['/auth/sign-in']);
           this._state.setError(null);
