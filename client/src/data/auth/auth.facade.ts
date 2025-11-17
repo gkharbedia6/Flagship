@@ -1,6 +1,6 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { AuthApiService } from '../api';
-import { catchError, filter, tap, throwError } from 'rxjs';
+import { catchError, filter, of, tap, throwError } from 'rxjs';
 import { AuthStateService } from './auth.state';
 import { iSignUpResponse, iSubmitCodeResponse, iUser, iVerifyEmailResponse } from '../../types';
 import { NavigationStart, Router } from '@angular/router';
@@ -33,16 +33,16 @@ export class AuthFacadeService {
 
   loadCurrentUserInfo() {
     if (!this._state.getIsAuthenticated()) {
-      return;
+      return of(null);
     }
     return this._authApi.getCurrentUser().pipe(
       tap((user: iUser) => {
         this.handleSignIn(user);
       }),
       catchError((error: HttpErrorResponse) => {
+        console.log(error);
         this.handleSignOut();
-
-        return throwError(() => error);
+        return of(null);
       })
     );
   }
