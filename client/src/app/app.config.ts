@@ -13,6 +13,7 @@ import { AuthFacadeService } from '../data/auth/auth.facade';
 import { STORAGE } from '../data/auth/tokens/storage.token';
 import { AuthInterceptor } from '../utils/interceptors';
 import { SESSION_STORAGE } from '../data/auth/tokens/session-storage.token';
+import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,5 +29,6 @@ export const appConfig: ApplicationConfig = {
     { provide: STORAGE, useValue: localStorage },
     { provide: SESSION_STORAGE, useValue: sessionStorage },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 5000 } },
   ],
 };

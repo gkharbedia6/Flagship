@@ -60,3 +60,25 @@ body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
+
+.alert-success {
+  @include mat.snack-bar-overrides(
+    (
+      container-color: green,
+    )
+  );
+}
+.alert-error {
+  @include mat.snack-bar-overrides(
+    (
+      container-color: red,
+    )
+  );
+}
+.alert-warning {
+  @include mat.snack-bar-overrides(
+    (
+      container-color: yellow,
+    )
+  );
+}

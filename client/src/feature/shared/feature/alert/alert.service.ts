@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AlertComponent } from './alert.component';
-import { iAlertData, iAlertRequest } from '../../../../types/alert.types';
+import { iAlertData } from '../../../../types/alert.types';
 
 @Injectable({
   providedIn: 'root',
@@ -9,26 +9,27 @@ import { iAlertData, iAlertRequest } from '../../../../types/alert.types';
 export class AlertService {
   private _snackBar = inject(MatSnackBar);
 
-  alertRequesting(msg: string, isLoading: boolean) {
+  alertRequesting(msg: string) {
     this._snackBar.openFromComponent(AlertComponent, {
-      data: <iAlertRequest>{ message: msg, type: 'request', isLoading },
+      data: <iAlertData>{ message: msg, type: 'request', isLoading: true },
       horizontalPosition: 'right',
       verticalPosition: 'top',
-      duration: 5000,
     });
   }
 
-  alertSuccess(msg: string) {
-    // this._snackBar.open('some message', 'X', {
-    //   horizontalPosition: 'center',
-    //   verticalPosition: 'top',
-    //   duration: 5000,
-    // });
+  alert(msg: string, type: iAlertData['type']) {
     this._snackBar.openFromComponent(AlertComponent, {
-      data: <iAlertData>{ message: msg, type: 'success' },
+      data: <iAlertData>{ message: msg, type: type, isLoading: false },
       horizontalPosition: 'right',
       verticalPosition: 'top',
-      duration: 5000,
+      panelClass:
+        type === 'success'
+          ? 'alert-success'
+          : type === 'error'
+          ? 'alert-error'
+          : type === 'warning'
+          ? 'alert-warning'
+          : '',
     });
   }
 }

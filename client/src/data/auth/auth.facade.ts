@@ -107,7 +107,7 @@ export class AuthFacadeService {
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: (response: iVerifyEmailResponse) => {
-          this._alert.alertSuccess(response.message);
+          // this._alert.alertSuccess(response.message);
 
           this._state.setError(null);
           this._state.setIsLoading(false);
@@ -123,7 +123,7 @@ export class AuthFacadeService {
 
   signIn(email: string, password: string) {
     this._state.setIsLoading(true);
-    this._alert.alertRequesting('Signing in', true);
+    // this._alert.alertRequesting('Signing in');
     return this._authApi
       .signIn({ email, password })
       .pipe(takeUntilDestroyed(this._destroyRef))
@@ -131,7 +131,7 @@ export class AuthFacadeService {
         next: (user: iUser) => {
           this._state.setError(null);
           this._state.setIsLoading(false);
-          this._alert.alertSuccess('Signed in successfully!');
+          // this._alert.alertSuccess('Signed in successfully!');
 
           this.handleSignIn(user);
           // const url = '/';
@@ -202,7 +202,7 @@ export class AuthFacadeService {
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: (response: any) => {
-          this._alert.alertSuccess(response.message);
+          // this._alert.alertSuccess(response.message);
           this._state.clearForgotPasswordSession();
           this._router.navigate(['/auth/sign-in']);
           this._state.setError(null);
