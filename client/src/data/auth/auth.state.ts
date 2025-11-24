@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { iForgotPasswordResponse, iSignUpResponse, iUser, iVerifyEmailResponse } from '../../types';
+import { iForgotPasswordResponse, iSignUpResponse, iUser } from '../../types';
 import { STORAGE } from './tokens/storage.token';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SESSION_STORAGE } from './tokens/session-storage.token';

@@ -1,7 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import {
+  iForgotPasswordResponse,
   iRecoverPasswordForm,
+  iRecoverPasswordResponse,
   iSignInForm,
+  iSignOutResponse,
   iSignUpForm,
   iSignUpResponse,
   iSubmitCodeForm,
@@ -32,15 +35,15 @@ export class AuthApiService {
     return this._httpRequest.post(`${this._baseUrl}/sign-in`, body);
   }
 
-  signOut(id: string) {
+  signOut(id: string): Observable<iSignOutResponse> {
     return this._httpRequest.post(`${this._baseUrl}/sign-out`, { id });
   }
 
-  getCurrentUser(): Observable<any> {
+  getCurrentUser(): Observable<iUser> {
     return this._httpRequest.get(`${this._baseUrl}/me`);
   }
 
-  requestForgotPasswordCode(email: string): Observable<any> {
+  requestForgotPasswordCode(email: string): Observable<iForgotPasswordResponse> {
     return this._httpRequest.post(`${this._baseUrl}/request-code`, { email });
   }
 
@@ -48,7 +51,7 @@ export class AuthApiService {
     return this._httpRequest.post(`${this._baseUrl}/submit-code`, body);
   }
 
-  recoverPassowrd(body: iRecoverPasswordForm): Observable<any> {
+  recoverPassowrd(body: iRecoverPasswordForm): Observable<iRecoverPasswordResponse> {
     return this._httpRequest.post(`${this._baseUrl}/recover-password`, body);
   }
 }

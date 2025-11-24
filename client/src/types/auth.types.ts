@@ -32,6 +32,10 @@ export interface iSignUpResponse {
   };
 }
 
+export interface iVerifyEmailResponse {
+  message: string;
+}
+
 export interface iForgotPasswordResponse {
   message: string;
   data: {
@@ -41,13 +45,17 @@ export interface iForgotPasswordResponse {
   };
 }
 
-export interface iVerifyEmailResponse {
-  message: string;
-}
-
 export interface iSubmitCodeResponse {
   message: string;
   data: { email: string };
+}
+
+export interface iRecoverPasswordResponse {
+  message: string;
+}
+
+export interface iSignOutResponse {
+  message: string;
 }
 
 export interface iUser {
@@ -59,6 +67,7 @@ export interface iUser {
     password: string;
     salt: string;
   };
+  imageUrl: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -4,8 +4,8 @@ import { SignInComponent } from '../feature/auth/sign-in.component';
 import { SignUpComponent } from '../feature/auth/sign-up.component';
 import { GuestGuard } from '../utils/guards/guest.guard';
 import { VerifyEmailGuard } from '../utils/guards/verify-email.guard';
-import { LandingComponent } from '../feature/landing/landing.component';
 import { AuthLayoutComponent } from '../feature/auth/layout/auth.component';
+import { ShellComponent } from '../feature/shell.component';
 
 export const routes: Routes = [
   {
@@ -36,9 +36,14 @@ export const routes: Routes = [
   },
   {
     path: '',
-    component: LandingComponent,
+    component: ShellComponent,
     canActivate: [AuthGuard],
     children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import(`../feature/landing/landing.component`).then((c) => c.LandingComponent),
+      },
       {
         path: 'profile',
         loadComponent: () =>

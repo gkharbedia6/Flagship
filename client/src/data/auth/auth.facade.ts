@@ -2,7 +2,15 @@ import { DestroyRef, inject, Injectable } from '@angular/core';
 import { AuthApiService } from '../api';
 import { catchError, filter, of, tap, throwError } from 'rxjs';
 import { AuthStateService } from './auth.state';
-import { iSignUpResponse, iSubmitCodeResponse, iUser, iVerifyEmailResponse } from '../../types';
+import {
+  iForgotPasswordResponse,
+  iRecoverPasswordResponse,
+  iSignOutResponse,
+  iSignUpResponse,
+  iSubmitCodeResponse,
+  iUser,
+  iVerifyEmailResponse,
+} from '../../types';
 import { NavigationStart, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -150,13 +158,13 @@ export class AuthFacadeService {
   requestForgotPasswordCode(email: string) {
     this._state.setIsLoading(true);
     return this._authApi.requestForgotPasswordCode(email).subscribe({
-      next: (response: any) => {
+      next: (response: iForgotPasswordResponse) => {
         this._state.setForgotPasswordStep('submit_code');
         this._state.setForgotPasswordSession(response);
         this._state.setError(null);
         this._state.setIsLoading(false);
       },
-      error: (error: any) => {
+      error: (error: HttpErrorResponse) => {
         this._alert.alert(error.error.message, 'error');
 
         this._state.setError(error);
@@ -204,7 +212,7 @@ export class AuthFacadeService {
       .recoverPassowrd({ password, email: sessionEmail, id: sessionId })
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
-        next: (response: any) => {
+        next: (response: iRecoverPasswordResponse) => {
           this._alert.alert(response.message, 'success');
           this._state.clearForgotPasswordSession();
           this._router.navigate(['/auth/sign-in']);
@@ -213,7 +221,6 @@ export class AuthFacadeService {
         },
         error: (error: HttpErrorResponse) => {
           this._alert.alert(error.error.message, 'error');
-
           console.log(error);
           this._state.setIsLoading(false);
           this._state.setError(error);
@@ -222,11 +229,28 @@ export class AuthFacadeService {
   }
 
   signOut(userId: string) {
-    return this._authApi.signOut(userId).pipe(
-      tap(() => {
-        this.handleSignOut();
-      })
-    );
+    this._alert.alertRequesting('Signing out');
+    this._state.setIsLoading(true);
+    if (!userId) {
+      this._state.setIsLoading(false);
+      throw new Error('Session timed out.');
+    }
+    return this._authApi
+      .signOut(userId)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: (response: iSignOutResponse) => {
+          this._alert.alert('Signed out successfully', 'success');
+
+          this.handleSignOut();
+        },
+        error: (error: HttpErrorResponse) => {
+          this._alert.alert(error.error.message, 'error');
+          console.log(error);
+          this._state.setIsLoading(false);
+          this._state.setError(error);
+        },
+      });
   }
 
   handleSignIn(user: iUser) {

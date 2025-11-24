@@ -24,6 +24,11 @@
       outlined-container-color: #f4f3f6,
     )
   );
+  @include mat.menu-overrides(
+    (
+      container-color: #f4f3f6,
+    )
+  );
 }
 
 html {
@@ -64,21 +69,29 @@ body {
 .alert-success {
   @include mat.snack-bar-overrides(
     (
-      container-color: green,
+      container-color: #b9e3b0,
+      // darker than #d4f6d8
+      supporting-text-color: #1a3d1f,
     )
   );
 }
+
 .alert-error {
   @include mat.snack-bar-overrides(
     (
-      container-color: red,
+      container-color: #e8b8b6,
+      // darker than #f9d6d5
+      supporting-text-color: #4a1f1d,
     )
   );
 }
+
 .alert-warning {
   @include mat.snack-bar-overrides(
     (
-      container-color: yellow,
+      container-color: #ffe48f,
+      // darker than #fff3c4
+      supporting-text-color: #4a3a12,
     )
   );
 }
