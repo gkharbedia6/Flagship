@@ -90,8 +90,8 @@ export class RecoverPasswordComponent {
 
   recoverPassword = new FormGroup(
     {
-      password: new FormControl('222222', [Validators.required, Validators.minLength(6)]),
-      confirmPassword: new FormControl('222222', [Validators.required]),
+      password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+      confirmPassword: new FormControl('', [Validators.required]),
     },
     {
       validators: matchPasswordValidator,

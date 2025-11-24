@@ -31,11 +31,7 @@ import { iAlertData } from '../../../../types/alert.types';
     }
   </div>`,
 })
-export class AlertComponent implements OnInit {
+export class AlertComponent {
   snackBarRef = inject(MatSnackBarRef);
   data = inject<iAlertData>(MAT_SNACK_BAR_DATA);
-
-  ngOnInit(): void {
-    console.log(this.data);
-  }
 }

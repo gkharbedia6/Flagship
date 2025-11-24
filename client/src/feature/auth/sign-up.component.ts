@@ -116,9 +116,9 @@ export class SignUpComponent {
 
   signUpForm = new FormGroup(
     {
-      email: new FormControl('giorgikharbedia6@gmail.com', [Validators.required, Validators.email]),
-      password: new FormControl('123123', [Validators.required, Validators.minLength(6)]),
-      confirmPassword: new FormControl('123123', [Validators.required]),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+      confirmPassword: new FormControl('', [Validators.required]),
     },
     {
       validators: matchPasswordValidator,

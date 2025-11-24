@@ -22,7 +22,6 @@ export class AuthInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
           this._authFacade.handleSignOut();
-          this._alert.alert(error.error.message, 'error');
         }
         this._alert.alert(error.error.message, 'error');
         return throwError(() => error);

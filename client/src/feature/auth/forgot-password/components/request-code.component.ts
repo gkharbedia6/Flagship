@@ -54,7 +54,7 @@ import { AuthFacadeService } from '../../../../data/auth';
 export class RequestCodeComponent {
   authFacade = inject(AuthFacadeService);
   forgotPasswordForm = new FormGroup({
-    email: new FormControl('giorgikharbedia6@gmail.com', [Validators.required, Validators.email]),
+    email: new FormControl('', [Validators.required, Validators.email]),
   });
 
   onSubmit() {

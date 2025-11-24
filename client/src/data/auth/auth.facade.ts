@@ -88,6 +88,7 @@ export class AuthFacadeService {
           this._router.navigate(['/auth/verify-email']);
         },
         error: (error: HttpErrorResponse) => {
+          this._alert.alert(error.error.message, 'error');
           this._state.setIsLoading(false);
           this._state.setError(error);
         },
@@ -107,14 +108,14 @@ export class AuthFacadeService {
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: (response: iVerifyEmailResponse) => {
-          // this._alert.alertSuccess(response.message);
-
+          this._alert.alert(response.message, 'success');
           this._state.setError(null);
           this._state.setIsLoading(false);
           this._state.clearSignUpSession();
           this._router.navigate(['/auth/sign-in']);
         },
         error: (error: HttpErrorResponse) => {
+          this._alert.alert(error.error.message, 'error');
           this._state.setIsLoading(false);
           this._state.setError(error);
         },
@@ -123,7 +124,7 @@ export class AuthFacadeService {
 
   signIn(email: string, password: string) {
     this._state.setIsLoading(true);
-    // this._alert.alertRequesting('Signing in');
+    this._alert.alertRequesting('Signing in');
     return this._authApi
       .signIn({ email, password })
       .pipe(takeUntilDestroyed(this._destroyRef))
@@ -131,17 +132,15 @@ export class AuthFacadeService {
         next: (user: iUser) => {
           this._state.setError(null);
           this._state.setIsLoading(false);
-          // this._alert.alertSuccess('Signed in successfully!');
-
+          this._alert.alert('Signed in successfully!', 'success');
           this.handleSignIn(user);
-          // const url = '/';
           const returnUrl = this._location.path().split('returnUrl=%2F');
           const url = !returnUrl[1] || returnUrl[1] === '' ? '/' : `/${returnUrl[1]}`;
-
           this._router.navigateByUrl(url);
         },
         error: (error: HttpErrorResponse) => {
           console.log(error);
+          this._alert.alert(error.error.message, 'error');
           this._state.setError(error);
           this._state.setIsLoading(false);
         },
@@ -158,6 +157,8 @@ export class AuthFacadeService {
         this._state.setIsLoading(false);
       },
       error: (error: any) => {
+        this._alert.alert(error.error.message, 'error');
+
         this._state.setError(error);
         this._state.setIsLoading(false);
       },
@@ -182,6 +183,8 @@ export class AuthFacadeService {
           this._state.setIsLoading(false);
         },
         error: (error: HttpErrorResponse) => {
+          this._alert.alert(error.error.message, 'error');
+
           this._state.setIsLoading(false);
           this._state.setError(error);
         },
@@ -202,13 +205,15 @@ export class AuthFacadeService {
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: (response: any) => {
-          // this._alert.alertSuccess(response.message);
+          this._alert.alert(response.message, 'success');
           this._state.clearForgotPasswordSession();
           this._router.navigate(['/auth/sign-in']);
           this._state.setError(null);
           this._state.setIsLoading(false);
         },
         error: (error: HttpErrorResponse) => {
+          this._alert.alert(error.error.message, 'error');
+
           console.log(error);
           this._state.setIsLoading(false);
           this._state.setError(error);
