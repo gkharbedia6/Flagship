@@ -11,8 +11,10 @@ import { RouterOutlet } from '@angular/router';
         <h1 class="p-8 italic text-2xl">flagship</h1>
         <router-outlet />
       </div>
-      <div class="bg-black  md:flex hidden md:w-[50%] h-full items-center justify-center p-20">
-        <h2 class="text-2xl text-white opacity-80">
+      <div
+        class="bg-[var(--mat-sys-on-background)] md:flex hidden md:w-[50%] h-full items-center justify-center p-20"
+      >
+        <h2 class="text-2xl text-[var(--mat-sys-background))] opacity-80">
           First time running @flagship in local. It just works.
         </h2>
       </div>

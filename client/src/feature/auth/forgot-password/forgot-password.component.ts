@@ -15,12 +15,12 @@ import { AuthFacadeService } from '../../../data/auth';
       class="min-w-[500px] top-1/2  left-1/2 absolute -translate-x-1/2 -translate-y-1/2 px-20 py-10 flex flex-col items-center justify-center"
     >
       <div class="flex gap-2 mb-10 w-full flex-col items-start justify-start">
-        <p class="m-0 text-lg text-black">
+        <p class="m-0 text-lg text-[var(--mat-sys-primary)]">
           @switch (this.authFacade.getForgotPasswordStep()) { @case ('request_code') {Forgot your
           password?} @case ('submit_code') {Forgot your password?} @case ('recover_password')
           {Change your password} }
         </p>
-        <p class="m-0 text-sm text-black opacity-70">
+        <p class="m-0 text-sm text-[var(--mat-sys-primary)] opacity-70">
           @switch (this.authFacade.getForgotPasswordStep()) { @case ('request_code') {Enter your
           email and we'll send you a link to code the password} @case ('submit_code') {Enter your
           email and we'll send you a link to code the password} @case ('recover_password') { Welcome

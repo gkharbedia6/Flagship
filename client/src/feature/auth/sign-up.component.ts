@@ -27,8 +27,8 @@ import { AuthFacadeService } from '../../data/auth';
       class="min-w-[500px] top-1/2  left-1/2 absolute -translate-x-1/2 -translate-y-1/2 px-20 py-10 flex flex-col items-center justify-center"
     >
       <div class="flex gap-2 mb-10 w-full flex-col items-start justify-start">
-        <p class="m-0 text-lg text-black">Get started</p>
-        <p class="m-0 text-sm text-black opacity-70">Create a new account</p>
+        <p class="m-0 text-lg text-[var(--mat-sys-primary)]">Get started</p>
+        <p class="m-0 text-sm text-[var(--mat-sys-primary)] opacity-70">Create a new account</p>
       </div>
       <form class="flex flex-col gap-1 w-full" [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
         <mat-form-field class="w-full">

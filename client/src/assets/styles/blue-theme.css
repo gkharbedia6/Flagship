@@ -1,7 +1,141 @@
 /* Note: Color palettes are generated from primary: #3b82f6, tertiary: #a855f7 */
+html.light {
+  color-scheme: light;
+
+  /* Primary */
+  --mat-sys-primary: #005ac2;
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: #d8e2ff;
+  --mat-sys-on-primary-container: #001a42;
+  --mat-sys-inverse-primary: #adc6ff;
+  --mat-sys-primary-fixed: #d8e2ff;
+  --mat-sys-primary-fixed-dim: #adc6ff;
+  --mat-sys-on-primary-fixed: #001a42;
+  --mat-sys-on-primary-fixed-variant: #004395;
+
+  /* Secondary */
+  --mat-sys-secondary: #495e8a;
+  --mat-sys-on-secondary: #ffffff;
+  --mat-sys-secondary-container: #d8e2ff;
+  --mat-sys-on-secondary-container: #001a42;
+  --mat-sys-secondary-fixed: #d8e2ff;
+  --mat-sys-secondary-fixed-dim: #b1c6f9;
+  --mat-sys-on-secondary-fixed: #001a42;
+  --mat-sys-on-secondary-fixed-variant: #304671;
+
+  /* Tertiary */
+  --mat-sys-tertiary: #842bd2;
+  --mat-sys-on-tertiary: #ffffff;
+  --mat-sys-tertiary-container: #f0dbff;
+  --mat-sys-on-tertiary-container: #2c0051;
+  --mat-sys-tertiary-fixed: #f0dbff;
+  --mat-sys-tertiary-fixed-dim: #ddb7ff;
+  --mat-sys-on-tertiary-fixed: #2c0051;
+  --mat-sys-on-tertiary-fixed-variant: #6900b3;
+
+  /* Neutral */
+  --mat-sys-background: #f9f9ff;
+  --mat-sys-on-background: #191b23;
+  --mat-sys-surface: #f9f9ff;
+  --mat-sys-surface-dim: #d8d9e3;
+  --mat-sys-surface-bright: #f9f9ff;
+  --mat-sys-surface-container-low: #f2f3fd;
+  --mat-sys-surface-container-lowest: #ffffff;
+  --mat-sys-surface-container: #ecedf7;
+  --mat-sys-surface-container-high: #e6e7f2;
+  --mat-sys-surface-container-highest: #e1e2ec;
+  --mat-sys-on-surface: #191b23;
+  --mat-sys-shadow: #000000;
+  --mat-sys-scrim: #000000;
+  --mat-sys-surface-tint: #005ac2;
+  --mat-sys-inverse-surface: #2e3038;
+  --mat-sys-inverse-on-surface: #eff0fa;
+  --mat-sys-outline: #727785;
+  --mat-sys-outline-variant: #c2c6d6;
+  --mat-sys-neutral10: #191b23;
+
+  /* Error */
+  --mat-sys-error: #ba1a1a;
+  --mat-sys-on-error: #ffffff;
+  --mat-sys-error-container: #ffdad6;
+  --mat-sys-on-error-container: #410002;
+
+  /* Neutral Variant */
+  --mat-sys-surface-variant: #dee2f2;
+  --mat-sys-on-surface-variant: #424754;
+  --mat-sys-neutral-variant20: #2b303c;
+}
+
+html.dark {
+  color-scheme: dark;
+
+  /* Primary */
+  --mat-sys-primary: #adc6ff;
+  --mat-sys-on-primary: #002e6a;
+  --mat-sys-primary-container: #004395;
+  --mat-sys-on-primary-container: #d8e2ff;
+  --mat-sys-inverse-primary: #005ac2;
+  --mat-sys-primary-fixed: #d8e2ff;
+  --mat-sys-primary-fixed-dim: #adc6ff;
+  --mat-sys-on-primary-fixed: #001a42;
+  --mat-sys-on-primary-fixed-variant: #004395;
+
+  /* Secondary */
+  --mat-sys-secondary: #b1c6f9;
+  --mat-sys-on-secondary: #182f59;
+  --mat-sys-secondary-container: #304671;
+  --mat-sys-on-secondary-container: #d8e2ff;
+  --mat-sys-secondary-fixed: #d8e2ff;
+  --mat-sys-secondary-fixed-dim: #b1c6f9;
+  --mat-sys-on-secondary-fixed: #001a42;
+  --mat-sys-on-secondary-fixed-variant: #304671;
+
+  /* Tertiary */
+  --mat-sys-tertiary: #ddb7ff;
+  --mat-sys-on-tertiary: #490080;
+  --mat-sys-tertiary-container: #6900b3;
+  --mat-sys-on-tertiary-container: #f0dbff;
+  --mat-sys-tertiary-fixed: #f0dbff;
+  --mat-sys-tertiary-fixed-dim: #ddb7ff;
+  --mat-sys-on-tertiary-fixed: #2c0051;
+  --mat-sys-on-tertiary-fixed-variant: #6900b3;
+
+  /* Neutral */
+  --mat-sys-background: #10131a;
+  --mat-sys-on-background: #e1e2ec;
+  --mat-sys-surface: #10131a;
+  --mat-sys-surface-dim: #10131a;
+  --mat-sys-surface-bright: #363941;
+  --mat-sys-surface-container-low: #191b23;
+  --mat-sys-surface-container-lowest: #0b0e15;
+  --mat-sys-surface-container: #1d2027;
+  --mat-sys-surface-container-high: #272a31;
+  --mat-sys-surface-container-highest: #32353c;
+  --mat-sys-on-surface: #e1e2ec;
+  --mat-sys-shadow: #000000;
+  --mat-sys-scrim: #000000;
+  --mat-sys-surface-tint: #adc6ff;
+  --mat-sys-inverse-surface: #e1e2ec;
+  --mat-sys-inverse-on-surface: #2e3038;
+  --mat-sys-outline: #8c909f;
+  --mat-sys-outline-variant: #424754;
+  --mat-sys-neutral10: #191b23;
+
+  /* Error */
+  --mat-sys-error: #ffb4ab;
+  --mat-sys-on-error: #690005;
+  --mat-sys-error-container: #93000a;
+  --mat-sys-on-error-container: #ffdad6;
+
+  /* Neutral Variant */
+  --mat-sys-surface-variant: #424754;
+  --mat-sys-on-surface-variant: #c2c6d6;
+  --mat-sys-neutral-variant20: #2b303c;
+}
+
 html {
   /* COLOR SYSTEM VARIABLES */
-  color-scheme: light;
+  color-scheme: light dark;
 
   /* Primary palette variables */
   --mat-sys-primary: light-dark(#005ac2, #adc6ff);
@@ -53,7 +187,8 @@ html {
   --mat-sys-inverse-on-surface: light-dark(#eff0fa, #2e3038);
   --mat-sys-outline: light-dark(#727785, #8c909f);
   --mat-sys-outline-variant: light-dark(#c2c6d6, #424754);
-  --mat-sys-neutral10: light-dark(#191b23, #191b23); /* Variable used for the form field native select option text color */
+  --mat-sys-neutral10: light-dark(#191b23, #191b23);
+  /* Variable used for the form field native select option text color
 
   /* Error palette variables */
   --mat-sys-error: light-dark(#ba1a1a, #ffb4ab);
@@ -64,16 +199,22 @@ html {
   /* Neutral variant palette variables */
   --mat-sys-surface-variant: light-dark(#dee2f2, #424754);
   --mat-sys-on-surface-variant: light-dark(#424754, #c2c6d6);
-  --mat-sys-neutral-variant20: light-dark(#2b303c, #2b303c); /* Variable used for the sidenav scrim (container background shadow when opened) */
+  --mat-sys-neutral-variant20: light-dark(#2b303c, #2b303c);
+  /* Variable used for the sidenav scrim (container background shadow when opened) */
 
   /* TYPOGRAPHY SYSTEM VARIABLES */
 
   /* Typography variables. Only used in the different typescale system variables. */
-  --mat-sys-brand-font-family: Roboto; /* The font-family to use for brand text. */
-  --mat-sys-plain-font-family: Roboto; /* The font-family to use for plain text. */
-  --mat-sys-bold-font-weight: 700; /* The font-weight to use for bold text. */
-  --mat-sys-medium-font-weight: 500; /* The font-weight to use for medium text. */
-  --mat-sys-regular-font-weight: 400; /* The font-weight to use for regular text. */
+  --mat-sys-brand-font-family: Roboto;
+  /* The font-family to use for brand text. */
+  --mat-sys-plain-font-family: Roboto;
+  /* The font-family to use for plain text. */
+  --mat-sys-bold-font-weight: 700;
+  /* The font-weight to use for bold text. */
+  --mat-sys-medium-font-weight: 500;
+  /* The font-weight to use for medium text. */
+  --mat-sys-regular-font-weight: 400;
+  /* The font-weight to use for regular text. */
 
   /* Typescale variables. */
   /* Warning: Risk of reduced fidelity from using the composite typography tokens (ex. --mat-sys-body-large) since

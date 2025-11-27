@@ -4,32 +4,7 @@
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
-@use './themes/blue-theme.css';
-
-:root {
-  @include mat.button-overrides(
-    (
-      outlined-container-shape: var(--mat-sys-corner-small),
-    )
-  );
-  @include mat.snack-bar-overrides(
-    (
-      button-color: #005ac2,
-      container-color: #f4f3f6,
-      supporting-text-color: black,
-    )
-  );
-  @include mat.card-overrides(
-    (
-      outlined-container-color: #f4f3f6,
-    )
-  );
-  @include mat.menu-overrides(
-    (
-      container-color: #f4f3f6,
-    )
-  );
-}
+@use './blue-theme.css';
 
 html {
   @include mat.theme(
@@ -44,7 +19,7 @@ body {
   // Default the application to a light color theme. This can be changed to
   // `dark` to enable the dark color theme, or to `light dark` to defer to the
   // user's system settings.
-  color-scheme: light;
+  color-scheme: light dark;
 
   // Set a default background, font and text colors for the application using
   // Angular Material's system-level CSS variables. Learn more about these
@@ -69,9 +44,9 @@ body {
 .alert-success {
   @include mat.snack-bar-overrides(
     (
-      container-color: #b9e3b0,
+      // container-color: #b9e3b0,
       // darker than #d4f6d8
-      supporting-text-color: #1a3d1f,
+      // supporting-text-color: #1a3d1f,
     )
   );
 }
@@ -79,9 +54,9 @@ body {
 .alert-error {
   @include mat.snack-bar-overrides(
     (
-      container-color: #e8b8b6,
+      // container-color: #e8b8b6,
       // darker than #f9d6d5
-      supporting-text-color: #4a1f1d,
+      // supporting-text-color: #4a1f1d,
     )
   );
 }
@@ -89,9 +64,17 @@ body {
 .alert-warning {
   @include mat.snack-bar-overrides(
     (
-      container-color: #ffe48f,
+      // container-color: #ffe48f,
       // darker than #fff3c4
-      supporting-text-color: #4a3a12,
+      // supporting-text-color: #4a3a12,
+    )
+  );
+}
+
+.menu-item {
+  @include mat.menu-overrides(
+    (
+      item-label-text-size: 12px,
     )
   );
 }

@@ -14,6 +14,7 @@ import { STORAGE } from '../data/auth/tokens/storage.token';
 import { AuthInterceptor } from '../utils/interceptors';
 import { SESSION_STORAGE } from '../data/auth/tokens/session-storage.token';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
+import { ThemeService } from '../data/theme/theme.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,7 +23,9 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
     provideAppInitializer(() => {
+      const themeService = inject(ThemeService);
       const authFacade = inject(AuthFacadeService);
+      themeService.initializeAppTheme();
       return authFacade.loadCurrentUserInfo();
     }),
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },

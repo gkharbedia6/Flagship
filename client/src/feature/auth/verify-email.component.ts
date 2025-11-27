@@ -11,8 +11,10 @@ import { VeirificationCodeForm } from './components/verification-code-form.compo
       class="min-w-[500px] top-1/2  left-1/2 absolute -translate-x-1/2 -translate-y-1/2 px-20 py-10 flex flex-col items-center justify-center"
     >
       <div class="flex gap-2 mb-10 w-full flex-col items-start justify-start">
-        <p class="m-0 text-lg text-black">Verify your account</p>
-        <p class="m-0 text-sm text-black opacity-70">Verification code was sent to your email</p>
+        <p class="m-0 text-lg text-[var(--mat-sys-primary)]">Verify your account</p>
+        <p class="m-0 text-sm text-[var(--mat-sys-primary)] opacity-70">
+          Verification code was sent to your email
+        </p>
       </div>
       <div class="w-full">
         <verification-code-form
